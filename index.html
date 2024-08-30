@@ -1,0 +1,445 @@
+<!DOCTYPE html>
+<html><head>
+<!--
+Menu inspired by https://codepen.io/cassandraPaige/pen/ZEYmMJg
+
+html symbols: https://www.toptal.com/designers/htmlarrows/symbols/
+
+Tablo API Reference: https://jessedp.github.io/tablo-api-docs/#tablo-api-introduction
+to watch live, POST to the channel (or recording) /watch endpoint and get the playlist_url 
+http://192.168.89.120:8887/guide/channels/357012/watch
+RESPONSE: {
+	"token":"d2131382-765c-4778-88fa-27bd1a794d75",
+	"expires":"2024-08-30T14:20:48Z",
+	"keepalive":120,
+	"playlist_url":"http://192.168.89.120:80/stream/pl.m3u8?xkRfyxK3qKjRwWU3PsSn7A",
+	"bif_url_sd":null,
+	"bif_url_hd":null,
+	"video_details":{"width":0,"height":0}
+	}
+-->
+
+<style>
+
+.container {
+  min-height: 100vh;
+}
+
+nav a {
+    font-size: 40px;
+    color: #fff;
+    text-decoration: none;
+    padding: 20px;
+    text-align: center;
+}
+
+nav {
+    position: fixed;
+    left: 0;
+    z-index: 50;
+    display: flex;
+    justify-content: space-around;
+    flex-direction: column;
+    height: 100vh;
+    background: #027;
+}
+
+section {
+    position: absolute;
+    top: 0;
+    height: 100vh;
+    width: 0;
+    opacity: 0;
+    display: flex;
+
+} 
+
+/* Styles applied on trigger */
+section:target {
+    opacity: 1;
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    z-index: 10;
+}
+
+section:target div {
+	padding-left: 100px;
+}
+
+/* Change the width and height values if you want the video player to be a different size. */
+video {
+	height: 720px; // sd=480, hd=720, fhd=1080
+	width: 1280px; // sd=720, hd=1280, fhd=1920
+}
+</style>
+
+<!--Load the hls video player to play .m3u8 playlists used by Tablo-->
+<script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
+
+<script>
+if(Hls.isSupported()) {
+	//var video = document.getElementById('video');
+	var hls = new Hls();
+	//hls.attachMedia(video);
+}
+
+// Helper Functions
+
+/* Get the value of a cookie */
+function getCookie(name) {
+  const value = `; ${document.cookie}`;
+  const parts = value.split(`; ${name}=`);
+  if (parts.length === 2) return parts.pop().split(';').shift();
+}
+
+/* save the tablo ip address to a cookie */
+function save_tablo_ip() {
+	var input = document.getElementById("tablo_ip_entry").value;
+	document.cookie = "tablo_ip_addr=" + input + ";max-age=63115200"
+}
+
+//Call Tablo REST api
+
+async function tGetRESTData(url, worker) {
+  try {
+    const response = await fetch(url);
+    if (!response.ok) {throw new Error(`Response status: ${response.status} (${url})`); }
+
+    const json = await response.json();
+	if (json.error.details) {
+		throw new Error(`REST Error: ${json.error.description} (${url})`);
+		alert(`REST Error: ${json.error.description} (${url})`); //DEBUG
+	} else {
+		worker();
+	}
+  } catch (error) { console.error(error.message); }
+}
+
+async function tPostRESTData(url, data, worker) {
+  try {
+    const response = await fetch(url, {method: "POST", body: data});
+    if (!response.ok) {throw new Error(`Response status: ${response.status} (${url})`); }
+
+    const json = await response.json();
+	if (json.error.details) {
+		throw new Error(`REST response: ${json.error.description} (${url})`);
+		alert(`REST Error: ${json.error.description} (${url})`); //DEBUG
+	} else {
+		worker();
+	}
+  } catch (error) { console.error(error.message); }
+}
+
+//User Interaction
+
+/* Callback to load the Setup section. Just a placeholder. */
+function doSetup() {
+
+}
+
+/* Callback to load the Home tab and configured channels list */
+async function doHome() {
+  const base_url = "http://" + document.getElementById("tablo_ip_entry").value + ":8885";
+  try {
+	const url = base_url + "/server/info";
+    const response = await fetch(url);
+    if (!response.ok) {
+      throw new Error(`Response status: ${response.status} (server info)`);
+    }
+
+    const json = await response.json();
+	
+	document.getElementById("Tserver_name").innerHTML = json.name + " (" + json.local_address + ")";
+	document.getElementById("Tserver_version").innerHTML = json.version;
+	document.getElementById("Tserver_model").innerHTML = json.model.name;
+	
+  } catch (error) {
+	alert("An error was encountered trying to reach " + url + " :: " + error.message);
+    console.error(error.message);
+  }	
+
+  try {
+	const url = base_url + "/server/harddrives";
+    const response = await fetch(url);
+    if (!response.ok) {
+      throw new Error(`Response status: ${response.status} (harddrives)`);
+    }
+
+    const json = await response.json();
+	
+	document.getElementById("Thd_info").innerHTML = json[0].name + " (" + json[0].free_mib + " MB available of " + json[0].size_mib + " MB)";
+
+	
+  } catch (error) {
+	alert("An error was encountered trying to reach " + url + " :: " + error.message);
+    console.error(error.message);
+  }	
+  
+  try {
+	const url = base_url + "/guide/channels";
+    const response = await fetch(url);
+    if (!response.ok) {
+      throw new Error(`Response status: ${response.status} (channels)`);
+    }
+
+    const json = await response.json();
+
+	document.getElementById("tchannel_count").innerHTML = Object.keys(json).length;
+	document.getElementById("tchannels").innerHTML = "<tr><th>Channel</th><th>Name</th><th>Quality</th></tr>";
+
+	for (channel of json) {
+		const channel_id = channel.replace(/^.*\//,'');
+		
+		const channel_details = await fetch(base_url + channel);
+		if (!channel_details.ok) {
+			throw new Error(`response stats: ${response.status} from ${channel} (channel)`);
+		}
+		const channel_info = await channel_details.json();
+
+		document.getElementById("tchannels").innerHTML += '<tr id="' + channel + '"><td>' + 
+			'<a href="#watch" onClick="doWatch(\'' + channel + '\')">' + channel_info.channel.major + "." + channel_info.channel.minor + "</a></td><td>" + 
+			channel_info.channel.call_sign + "</td><td>" + 
+			channel_info.channel.resolution + "</td></tr>";
+	}
+	
+  } catch (error) {
+	alert("Error:" + error.message);
+    console.error(error.message);
+  }	
+}
+
+//* Callback to load the Recordings section and list all airings */
+async function doRecordings() {
+  const base_url = "http://" + document.getElementById("tablo_ip_entry").value + ":8885";
+  try {
+	const url = base_url + "/recordings/airings";
+    const response = await fetch(url);
+    if (!response.ok) {
+      throw new Error(`Response status: ${response.status}`);
+    }
+
+    const json = await response.json();
+
+	document.getElementById('Trecordings').innerHTML = "<tr><th>ID</th><th>Name</th><th>Duration</th><th>Is Clean</th><th>Resolution</th><th>Channel</th><th>Data</th></tr>\n";
+	document.getElementById("trec_count").innerHTML = Object.keys(json).length;
+	
+	for (path of json) {
+		try {
+			const url = base_url + path ;
+			const response = await fetch(url);
+					
+			if (!response.ok) {
+				throw new Error(`Response status: ${response.status}`);
+			}
+
+			const recording = await response.json();
+			
+			document.getElementById('Trecordings').innerHTML += "<tr><td>" + 
+				recording.object_id + "</td><td>" +
+				'<a href="#watch" onClick="doWatch(\'' + path + '\')">' + recording.airing_details.show_title + "</a></td><td>" + 
+				Math.round(recording.video_details.duration/60) + "m </td><td>" +
+				recording.video_details.clean + "</td><td>" +
+				recording.video_details.height + "</td><td>" +
+				recording.airing_details.channel.channel.call_sign + "</td><td>" + 
+				recording.airing_details.datetime +	"</td></tr>\n";
+		} catch (error) {
+			alert("An error was encountered trying to reach :: " + error.message);
+		}
+	}
+
+  } catch (error) {
+	alert("An error was encountered trying to reach :: " + error.message);
+    console.error(error.message);
+  }
+}
+
+/* Callback to load the Watch section and start the selected video stream */
+async function doWatch(channel) {
+	const base_url = "http://" + document.getElementById("tablo_ip_entry").value + ":8885";
+  try {
+    const url = base_url + channel + "/watch";
+    const response = await fetch(url, {method: "POST"});
+    if (!response.ok) {throw new Error(`Response status: ${response.status} (${url})`); }
+
+    const json = await response.json();
+	if (json.error) {
+		throw new Error(`REST Error: ${json.error.description} (${url})`);
+		alert(`REST Error: ${json.error.description} (${url})`); //DEBUG
+	} else {
+		document.getElementById('playlist_url').innerHTML = `The playlist URL is "${json.playlist_url}".`;
+	
+		/* EXPERIMENTAL use HLS to play video directly from Tablo */
+		var video = document.getElementById('video');
+		if(Hls.isSupported()) {
+			//var hls = new Hls();
+			hls.attachMedia(video);
+			hls.loadSource(json.playlist_url);
+			video.play();
+			
+			//hls.stopLoad();
+		} else if (video.canPlayType('application/vnd.apple.mpegurl')) {
+			video.src = json.playlist_url;
+			video.addEventListener('loadedmetadata',function() {
+			video.play();
+			});
+		} else {
+			alert("Unable to play the video. Note: the hls.js open source javascript player is needed for this to work.");
+		}
+	}
+  } catch (error) { console.error(error.message); }
+}
+
+// callback for the stop button below the video
+function StopVideo() {
+	var video = document.getElementById('video');
+	hls.attachMedia(video);
+	hls.stopLoad();
+}
+/* Callback to load the Settings section. Not yet implemented. */
+function doSettings() {
+}
+
+//BOOSTRAP
+function bootstrap() {
+	let tablo_ip_addr = getCookie('tablo_ip_addr');
+	if (tablo_ip_addr) {
+		document.getElementById("tablo_ip_entry").value = tablo_ip_addr;
+		doHome();
+		location.href = location.href.replace(/#.*$/,'') + "#home";
+	} else {
+		location.href = location.href.replace(/#.*$/,'') + "#setup";
+	}
+}
+
+</script>
+
+</head><body onload="bootstrap();">
+<nav>
+<!--<a href="#setup">&#10070;</a><!--Setup-->
+<a href="#home" onclick="doHome()">&#8962;</a><!--Home-->
+<a href="#recordings" onclick="doRecordings()">&#9991;</a><!--Recordings-->
+<a href="#schedule">&#9998;</a><!--Schedule-->
+<a href="#settings">&#9881;</a><!--Settings-->
+<a href="#about">?</a><!--About-->
+<!--<a href="#watch">W</a><!--Watch-->
+</nav>
+
+<div class="container">
+<section id="setup"><!-- ################################################# -->
+<div>
+<h1>Setup</h1>
+<form>
+<table>
+	<tr><th>Tablo IP Address:</th><td><input id="tablo_ip_entry" type="text" required pattern="((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)(\.|$)){4}"/> </i>i.e. 10.10.10.2</i></td></tr>
+</table>
+<input type="submit" value="Save" onclick="save_tablo_ip();">
+</form>
+<br>
+<p>This value will be saved in a cookie in your web browser. If you remove this cookie, you will need to re-enter it again.</p>
+</div>
+</section>
+
+<section id="home"><!-- ################################################# -->
+<div>
+<h1>Home</h1>
+<table>
+	<tr><th>Tablo Name:</th><td id="Tserver_name"><td></tr>
+	<tr><th>Tablo Model:</th><td id="Tserver_model"><td></tr>
+	<tr><th>Tablo Firmware:</th><td id="Tserver_version"><td></tr>
+	<tr><th>Storage:</th><td id="Thd_info"></td></tr>
+</table>
+
+<h2>Active Channels (<span id="tchannel_count"></span>)</h2>
+<table id="tchannels">
+</table>
+</div>
+</section>
+
+<section id="recordings"><!-- ################################################# -->
+<div>
+<h1>Recordings (<span id="trec_count"></span>)</h1>
+<table id="Trecordings"></table>
+</div>
+</section>
+
+<section id="schedule"><!-- ################################################# -->
+<div>
+<h1>Schedule</h1>
+
+<p>Scheduling is not yet functional.</p>
+
+<h2>Schedule a New Recording</h2>
+<form>
+<table>
+	<tr><th>Title:</th><td><input type=text name="title"</input> <i>Max 100 characters.</i></td></tr>
+	<tr><th>Channel:</th><td><select name="channel_list">
+								<option>...</option>
+							</select></td></tr>
+	<tr><th>When:</th><td>date and time</td></tr>
+	<tr><th>Duration:</th><td>time minutes</td></tr>
+</table>
+<button name="cancel">Cancel</button><button name="submit">Done</button>
+</form>
+
+<h2>Scheduled Recordings (<span id="schedule_count"></span>)</h2>
+
+<table>
+	<tr><th>ID</th><th>Name</th><th>Channel</th><th>Start</th><th>Duration</th><th>Delete?</th></tr>
+	<tr><td>0</td><td>Placeholder</td><td>1</td><td>1970-01-01 00:00</td><td>60</td><td><a href="">Delete</td></tr>
+</table>
+
+</form>
+<!-- API DOCUMENTATION
+GET /guide/programs?state=scheduled
+	["/guide/programs/2902433"]
+-->
+<table id="Tscheduled"></table>
+
+
+</div>
+</section>
+
+<section id="settings"><!-- ################################################# -->
+<div>
+<h1>Settings</h1>
+
+<p>Settings is not yet functional.</p>
+
+<table>
+	<tr><th>Tablo IP Address:</th><td><input type="text"></input></td></tr>
+	<tr><th>Tablo Name:</th><td><input type="text"></input></td></tr>
+	<tr><th>Recording Quality:</th><td><input type="select"></input></td></tr>
+	<tr><th>Live TV Quality:</th><td><input type="select"></input></td></tr>
+</table>
+</div>
+</section>
+
+<section id="watch"><!-- ################################################# -->
+<div>
+<h1>Watch</h1>
+<p><center><span id="playlist_url">Loading ...</span></center></p>
+
+<video id="video" controls></video><br/>
+<p><button onClick="StopVideo();">Stop</button> Press the button when you are done!</p>
+</div>
+</section>
+
+<section id="about"><!-- ################################################# -->
+<div>
+<h1>About</h1>
+<p>Tablo Lite is a single page application (SPA) to provide a basic user interface to the <a href="https://www.tablotv.com/">Tablo</a> network attached OTA PVR made by Nuvyyo. It was built as a backup to work with the older 2-Tuner device in the event that the official web application becomes unavailable or no longer supports the device.<p>
+
+<h2>References</h2>
+<ul>
+ <li><a href="https://community.tablotv.com/c/tablo-apps/third-party-apps-plex/17">Official 3rd Party Tool Forum.</a></li>
+ <li><a href="https://jessedp.github.io/tablo-api-docs/#tablo-api-introduction">community maintained documentation site for the API.</a></li>
+ <li><a href="https://www.tablotv.com/">Official Tablo Website.</a></li>
+ <li><a href="https://github.com/video-dev/hls.js/"> hls.js video player to support m3u8 playlists.</a></li>
+</ul>
+</div>
+</section>
+</div>
+
+</body>
+</html>
