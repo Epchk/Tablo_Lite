@@ -1,5 +1,5 @@
 # Tablo_Lite
-A single document simple web UI for the Tablo OTa PVR device. The Tablo is a network attached OTA PVR produced by Nuvyyo LLC.
+A single document simple web UI for the Tablo OTA PVR device. The Tablo is a network attached OTA PVR produced by Nuvyyo LLC.
 
 ## Current Functionality
 - Manual setup of device IP and storing the IP Address in a cookie for future use.
