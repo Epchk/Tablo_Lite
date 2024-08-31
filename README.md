@@ -8,6 +8,7 @@ If you are looking for the official web app for the Tablo, it's at ![http://my.t
 - List device information.
 - List available channels and play live show directly in the browser. Does not include guide data.
 - List recordings and play directly from the device.
+- List scheduled recordings.
 
 ### Sample home (default) screen
 ![Tablo Lite Home screen - alpha](https://github.com/user-attachments/assets/a1d609c8-c2d3-438b-88b8-5c4c7424d974)
@@ -16,6 +17,6 @@ Tablo device information is displayed at the top with a list of the configured c
 
 ## Planned Functionality
 - Settings page to display details of device settings and maybe edit.
-- Schedule new manual recording.
-- List currently scheduled recordings.
+- Schedule new manual recording. (maybe)
+- Delete scheduled recording.
 - Delete failed recordings.
