@@ -69,8 +69,8 @@ section:target div {
 
 /* Change the width and height values if you want the video player to be a different size. */
 video {
-	height: 720px; // sd=480, hd=720, fhd=1080
-	width: 1280px; // sd=720, hd=1280, fhd=1920
+	height: 720px;
+	width: 1280px;
 }
 </style>
 
@@ -209,6 +209,55 @@ async function doHome() {
   }	
 }
 
+async function doSchedule() {
+	const base_url = "http://" + document.getElementById("tablo_ip_entry").value + ":8885";
+	const url = base_url + "/guide/airings";
+		
+	try {
+		const response = await fetch(url);
+		if (!response.ok) {throw new Error(`Response status: ${response.status} (${url})`); }
+
+		const json = await response.json();
+		if (json.error) {
+			throw new Error(`REST response: ${json.error.description} (${url})`);
+			alert(`REST Error: ${json.error.description} (${url})`); //DEBUG
+		} else {
+			console.log(json);
+		}
+		
+		document.getElementById('tschedule_list').innerHTML =
+		'<tr><th>ID</th><th>Name</th><th>Channel</th><th>Start</th><th>Duration</th><th>Delete?</th></tr>';
+		document.getElementById("tschedule_count").innerHTML = Object.keys(json).length;
+		for (path of json) {
+			try {
+				const url = base_url + path ;
+				const response = await fetch(url);
+					
+				if (!response.ok) {
+					throw new Error(`Response status: ${response.status}`);
+				}
+				const recording = await response.json();
+				if (recording.error) {
+					throw new Error(`REST response: ${recording.error.description} (${url})`);
+					alert(`REST Error: ${recording.error.description} (${url})`); //DEBUG
+				} else {
+					console.log(recording);
+				}
+
+				document.getElementById('tschedule_list').innerHTML +=	`<tr><td>${recording.object_id}</td><td>${recording.airing_details.show_title}</td><td>${recording.airing_details.channel.channel.call_sign}</td><td>${recording.airing_details.datetime}</td><td>${recording.airing_details.duration}</td><td>-</td></tr>`;
+			
+			} catch (error) {
+				alert("An error was encountered trying to reach :: " + error.message);
+				console.error(error.message);
+			}
+		}
+	} catch (error) { console.error(error.message); }
+}
+	
+	
+
+
+
 //* Callback to load the Recordings section and list all airings */
 async function doRecordings() {
   const base_url = "http://" + document.getElementById("tablo_ip_entry").value + ":8885";
@@ -319,7 +368,7 @@ function bootstrap() {
 <!--<a href="#setup">&#10070;</a><!--Setup-->
 <a href="#home" onclick="doHome()">&#8962;</a><!--Home-->
 <a href="#recordings" onclick="doRecordings()">&#9991;</a><!--Recordings-->
-<a href="#schedule">&#9998;</a><!--Schedule-->
+<a href="#schedule" onclick="doSchedule()">&#9998;</a><!--Schedule-->
 <a href="#settings">&#9881;</a><!--Settings-->
 <a href="#about">?</a><!--About-->
 <!--<a href="#watch">W</a><!--Watch-->
@@ -367,35 +416,16 @@ function bootstrap() {
 <div>
 <h1>Schedule</h1>
 
-<p>Scheduling is not yet functional.</p>
-
 <h2>Schedule a New Recording</h2>
-<form>
-<table>
-	<tr><th>Title:</th><td><input type=text name="title"</input> <i>Max 100 characters.</i></td></tr>
-	<tr><th>Channel:</th><td><select name="channel_list">
-								<option>...</option>
-							</select></td></tr>
-	<tr><th>When:</th><td>date and time</td></tr>
-	<tr><th>Duration:</th><td>time minutes</td></tr>
-</table>
-<button name="cancel">Cancel</button><button name="submit">Done</button>
-</form>
 
-<h2>Scheduled Recordings (<span id="schedule_count"></span>)</h2>
+<p>Not yet implemented.</p>
 
-<table>
+<h2>Scheduled Recordings (<span id="tschedule_count"></span>)</h2>
+
+<table id="tschedule_list">
 	<tr><th>ID</th><th>Name</th><th>Channel</th><th>Start</th><th>Duration</th><th>Delete?</th></tr>
 	<tr><td>0</td><td>Placeholder</td><td>1</td><td>1970-01-01 00:00</td><td>60</td><td><a href="">Delete</td></tr>
 </table>
-
-</form>
-<!-- API DOCUMENTATION
-GET /guide/programs?state=scheduled
-	["/guide/programs/2902433"]
--->
-<table id="Tscheduled"></table>
-
 
 </div>
 </section>
