@@ -3,7 +3,7 @@ A single document simple web UI for the Tablo OTA PVR device. The Tablo is a net
 
 ## Current Functionality
 - Manual setup of device IP and storing the IP Address in a cookie for future use.
-- List device information
+- List device information.
 - List available channels and play live show directly in the browser. Does not include guide data.
 - List recordings and play directly from the device.
 
@@ -14,6 +14,6 @@ Tablo device information is displayed at the top with a list of the configured c
 
 ## Planned Functionality
 - Settings page to display details of device settings and maybe edit.
-- Schedule new manual recording
-- List currently scheduled recordings
-- Delete failed recordings
+- Schedule new manual recording.
+- List currently scheduled recordings.
+- Delete failed recordings.
