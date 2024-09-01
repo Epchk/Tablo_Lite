@@ -84,9 +84,11 @@ function getCookie(name) {
 /* save the tablo ip address to a cookie */
 function save_tablo_ip() {
 	var input = document.getElementById("tablo_ip_entry").value;
-	const tv_listings_url = document.getElementById("tv_listings_url").value;
+	var tv_listings_url = document.getElementById("tv_listings_url").value;
 	document.cookie = `tablo_ip_addr=${input}; max-age=63115200; SameSite=Strict`;
-	if (tv_listings_url) document.cookie = `tv_listings_url=${tv_listings_url}; max-age=63115200; SameSite=Strict`;
+	if (tv_listings_url) {
+		document.cookie = `tv_listings_url=${tv_listings_url}; max-age=63115200; SameSite=Strict`;
+	}
 	bootstrap();
 }
 
@@ -225,9 +227,12 @@ function doSettings() {
 function bootstrap() {
 	let tablo_ip_addr = getCookie('tablo_ip_addr');
 	const tv_listings_url = getCookie('tv_listings_url');
+	if (tv_listings_url) {
+		document.getElementById("tv_listings_link").href = tv_listings_url;
+	}
+	
 	if (tablo_ip_addr) {
 		document.getElementById("tablo_ip_entry").value = tablo_ip_addr;
-		if (tv_listings_url) document.getElementById("tv_listings_url").href = tv_listings_url;
 		doHome();
 		location.href = location.href.replace(/#.*$/,'') + "#home";
 	} else {
@@ -275,7 +280,7 @@ function bootstrap() {
 </table>
 
 <h2>Active Channels (<span id="tchannel_count"></span>)</h2>
-<p><a id="tv_listings_url" href="https://www.ontvtonight.com/ca/guide/listings/TorontoNight.html" target="_blank">Tonight's OTA TV Listings</a></p>
+<p><a id="tv_listings_link" href="https://www.ontvtonight.com/ca/guide/listings/TorontoNight.html" target="_blank">Tonight's OTA TV Listings</a></p>
 <table id="tchannels">
 </table>
 </div>
