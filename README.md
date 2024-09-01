@@ -28,6 +28,7 @@ Tablo device information is displayed at the top with a list of the configured c
 
 - Delete scheduled recording.
 - Delete failed recordings.
+- Paginate channels, recordings, and schedule to a maximum of 50 lines per page.
 
 ### Potential Functionality
 
