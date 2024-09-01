@@ -74,10 +74,12 @@ video {
 }
 </style>
 
+
 <!--Load the hls video player to play .m3u8 playlists used by Tablo-->
 <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
-
+<script src="tablo_ota.js"></script>
 <script>
+
 if(Hls.isSupported()) {
 	//var video = document.getElementById('video');
 	var hls = new Hls();
@@ -138,75 +140,37 @@ function doSetup() {
 
 }
 
-/* Callback to load the Home tab and configured channels list */
+/* Callback to load the Home tab: device info, hd info, channel list */
 async function doHome() {
-  const base_url = "http://" + document.getElementById("tablo_ip_entry").value + ":8885";
-  try {
-	const url = base_url + "/server/info";
-    const response = await fetch(url);
-    if (!response.ok) {
-      throw new Error(`Response status: ${response.status} (server info)`);
-    }
+  	//Inject the server info into the Home section
+	tgetServerInfo().then(server => {
+		document.getElementById("Tserver_name").innerHTML = server.name + " (" + server.local_address + ")";
+		document.getElementById("Tserver_version").innerHTML = server.version;
+		document.getElementById("Tserver_model").innerHTML = server.model.name;
+	});
 
-    const json = await response.json();
-	
-	document.getElementById("Tserver_name").innerHTML = json.name + " (" + json.local_address + ")";
-	document.getElementById("Tserver_version").innerHTML = json.version;
-	document.getElementById("Tserver_model").innerHTML = json.model.name;
-	
-  } catch (error) {
-	alert("An error was encountered trying to reach " + url + " :: " + error.message);
-    console.error(error.message);
-  }	
-
-  try {
-	const url = base_url + "/server/harddrives";
-    const response = await fetch(url);
-    if (!response.ok) {
-      throw new Error(`Response status: ${response.status} (harddrives)`);
-    }
-
-    const json = await response.json();
-	
-	document.getElementById("Thd_info").innerHTML = json[0].name + " (" + json[0].free_mib + " MB available of " + json[0].size_mib + " MB)";
-
-	
-  } catch (error) {
-	alert("An error was encountered trying to reach " + url + " :: " + error.message);
-    console.error(error.message);
-  }	
-  
-  try {
-	const url = base_url + "/guide/channels";
-    const response = await fetch(url);
-    if (!response.ok) {
-      throw new Error(`Response status: ${response.status} (channels)`);
-    }
-
-    const json = await response.json();
-
-	document.getElementById("tchannel_count").innerHTML = Object.keys(json).length;
-	document.getElementById("tchannels").innerHTML = "<tr><th>Channel</th><th>Name</th><th>Quality</th></tr>";
-
-	for (channel of json) {
-		const channel_id = channel.replace(/^.*\//,'');
-		
-		const channel_details = await fetch(base_url + channel);
-		if (!channel_details.ok) {
-			throw new Error(`response stats: ${response.status} from ${channel} (channel)`);
+  	//Inject the Harddrive data into the Home section
+	tgetHarddrive().then(hd => {
+		document.getElementById("Thd_info").innerHTML = '';
+		for (drive of hd) {
+			document.getElementById("Thd_info").innerHTML += `<th>${drive.name}</th><td>${drive.free_mib} MB available of ${drive.size_mib} MB</td>`;
 		}
-		const channel_info = await channel_details.json();
+	});
 
-		document.getElementById("tchannels").innerHTML += '<tr id="' + channel + '"><td>' + 
-			'<a href="#watch" onClick="doWatch(\'' + channel + '\')">' + channel_info.channel.major + "." + channel_info.channel.minor + "</a></td><td>" + 
-			channel_info.channel.call_sign + "</td><td>" + 
-			channel_info.channel.resolution + "</td></tr>";
-	}
-	
-  } catch (error) {
-	alert("Error:" + error.message);
-    console.error(error.message);
-  }	
+	//Inject the channel detail into the Home section
+	tgetChannelList().then(channels => {
+		document.getElementById("tchannel_count").innerHTML = Object.keys(channels).length;
+		document.getElementById("tchannels").innerHTML = "<tr><th>Channel</th><th>Name</th><th>Quality</th></tr>";
+
+		for (uri of channels) {
+			tgetChannelDetails(uri).then(channel => {
+				document.getElementById("tchannels").innerHTML += '<tr id="' + channel.object_id + '"><td>' + 
+				'<a href="#watch" onClick="doWatch(\'' + channel.object_id + '\')">' + channel.channel.major + "." + channel.channel.minor + "</a></td><td>" + 
+				channel.channel.call_sign + "</td><td>" + 
+				channel.channel.resolution + "</td></tr>";
+			});
+		}
+	});
 }
 
 async function doSchedule() {
@@ -396,7 +360,7 @@ function bootstrap() {
 	<tr><th>Tablo Name:</th><td id="Tserver_name"><td></tr>
 	<tr><th>Tablo Model:</th><td id="Tserver_model"><td></tr>
 	<tr><th>Tablo Firmware:</th><td id="Tserver_version"><td></tr>
-	<tr><th>Storage:</th><td id="Thd_info"></td></tr>
+	<tr id="Thd_info"></tr>
 </table>
 
 <h2>Active Channels (<span id="tchannel_count"></span>)</h2>
