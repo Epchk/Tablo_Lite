@@ -3,6 +3,12 @@ A single document simple web UI for the Tablo OTA PVR device. The Tablo is a net
 
 If you are looking for the official web app for the Tablo, it's at ![http://my.tablotv.com/](http://my.tablotv.com/). Use it. it's better.
 
+## Installation
+
+Put the "index.html" and "tablo_ota.js" files in the same directory. They can be loaded directly into a web browser using the "file:" method or served from a web server. If they are served from a web server, they must be over http (not https).
+
+The need to serve them over http is due to the tablo device not having an https server and modern browsers not supporting mixed security functionality.
+
 ## Current Functionality
 - Manual setup of device IP and storing the IP Address in a cookie for future use.
 - List device information.
