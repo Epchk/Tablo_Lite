@@ -7,19 +7,7 @@ Menu inspired by https://codepen.io/cassandraPaige/pen/ZEYmMJg
 html symbols: https://www.toptal.com/designers/htmlarrows/symbols/
 
 Tablo API Reference: https://jessedp.github.io/tablo-api-docs/#tablo-api-introduction
-to watch live, POST to the channel (or recording) /watch endpoint and get the playlist_url 
-http://192.168.89.120:8887/guide/channels/357012/watch
-RESPONSE: {
-	"token":"d2131382-765c-4778-88fa-27bd1a794d75",
-	"expires":"2024-08-30T14:20:48Z",
-	"keepalive":120,
-	"playlist_url":"http://192.168.89.120:80/stream/pl.m3u8?xkRfyxK3qKjRwWU3PsSn7A",
-	"bif_url_sd":null,
-	"bif_url_hd":null,
-	"video_details":{"width":0,"height":0}
-	}
 -->
-
 <style>
 
 .container {
@@ -75,17 +63,13 @@ video {
 }
 </style>
 
-
 <!--Load the hls video player to play .m3u8 playlists used by Tablo-->
 <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
 <!-- load my tablo api library -->
 <script src="tablo_ota.js"></script>
 <script>
-
 if(Hls.isSupported()) {
-	//var video = document.getElementById('video');
 	var hls = new Hls();
-	//hls.attachMedia(video);
 }
 
 // Helper Functions
@@ -101,8 +85,8 @@ function getCookie(name) {
 function save_tablo_ip() {
 	var input = document.getElementById("tablo_ip_entry").value;
 	const tv_listings_url = document.getElementById("tv_listings_url").value;
-	document.cookie = "tablo_ip_addr=" + input + ";max-age=63115200; SameSite=Strict";
-	if (tv_listings_url) document.cookie = "tv_listings_url=" + tv_listings_url + ";max-age=63115200; SameSite=Strict";
+	document.cookie = `tablo_ip_addr=${input}; max-age=63115200; SameSite=Strict`;
+	if (tv_listings_url) document.cookie = `tv_listings_url=${tv_listings_url}; max-age=63115200; SameSite=Strict`;
 	bootstrap();
 }
 
@@ -117,7 +101,7 @@ function doSetup() {
 async function doHome() {
   	//Inject the server info into the Home section
 	tgetServerInfo().then(server => {
-		document.getElementById("Tserver_name").innerHTML = server.name + " (" + server.local_address + ")";
+		document.getElementById("Tserver_name").innerHTML = `${server.name} (${server.local_address})`;
 		document.getElementById("Tserver_version").innerHTML = server.version;
 		document.getElementById("Tserver_model").innerHTML = server.model.name;
 	});
@@ -138,10 +122,9 @@ async function doHome() {
 		for (uri of channels) {
 			//Inject details for each channel
 			tgetDetails(uri).then(channel => {
-				document.getElementById("tchannels").innerHTML += '<tr id="' + channel.object_id + '"><td>' + 
-				'<a href="#watch" onClick="doWatch(\'' + channel.path + '\')">' + channel.channel.major + "." + channel.channel.minor + "</a></td><td>" + 
-				channel.channel.call_sign + "</td><td>" + 
-				channel.channel.resolution + "</td></tr>";
+				document.getElementById("tchannels").innerHTML += `<tr id="${channel.object_id}"><td><a href="#watch" onClick="doWatch("${channel.path}")>${channel.channel.major}.${channel.channel.minor}</a></td><td>` + 
+				`${channel.channel.call_sign}</td><td>` + 
+				`${channel.channel.resolution}</td></tr>`;
 			});
 		}
 	});
@@ -175,21 +158,19 @@ async function doRecordings() {
 	
 		for (path of recordings) {
 			tgetDetails(path).then(recording => {
-				document.getElementById('Trecordings').innerHTML += "<tr><td>" + 
-					recording.object_id + "</td><td>" +
-					'<a href="#watch" onClick="doWatch(\'' + recording.path + '\')">' + recording.airing_details.show_title + "</a></td><td>" + 
+				document.getElementById('Trecordings').innerHTML += `<tr><td>${recording.object_id}</td><td>` +
+					`<a href="#watch" onClick="doWatch(${recording.path})">${recording.airing_details.show_title}</a></td><td>` + 
 					Math.round(recording.video_details.duration/60) + "m </td><td>" +
-					recording.video_details.clean + "</td><td>" +
-					recording.video_details.height + "</td><td>" +
-					recording.airing_details.channel.channel.call_sign + "</td><td>" + 
-					recording.airing_details.datetime +	"</td></tr>\n";
+					`${recording.video_details.clean}</td><td>` +
+					`${recording.video_details.height}</td><td>` +
+					`${recording.airing_details.channel.channel.call_sign}</td><td>` + 
+					`${recording.airing_details.datetime}</td></tr>\n`;
 			});
 		}
 	});
 }
 
 /* Callback to load the Watch section and start the selected video stream */
-//2903135 The Suicide Squad (2021)
 async function doWatch(path) {
 	tgetWatchDetails(path).then(stream => {
 		document.getElementById('playlist_url').innerHTML = `The playlist URL is "${stream.playlist_url}".`;
@@ -261,7 +242,7 @@ function bootstrap() {
 <input type="submit" value="Save" onclick="save_tablo_ip();">
 </form>
 <br>
-<p>These values will be saved in a cookies in your web browser. If you remove the cookies, you will need to re-enter.</p>
+<p>These values will be saved in cookies in your web browser. If you remove the cookies, you will need to re-enter.</p>
 </div>
 </section>
 
