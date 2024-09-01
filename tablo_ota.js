@@ -27,7 +27,7 @@ async function tpostRESTData(url, data) {
         if (json.error) {
             throw new Error(`REST Error: ${json.error.description} (${url})`);
         } else {
-            json.then(value => {return json;});
+            return json;
         }
     } catch (error) { console.error(error.message); }
 }
@@ -47,7 +47,7 @@ async function tpatchRESTData(url, data) {
 }
 
 // API Calls - these should be exported
-//  All API calls return a JSON structure
+//  All API calls return a promise for a JSON structure
 //  if an error is encountered check the error log for details
 
 // returns a json list of paths for each channel configured on the Tablo device
@@ -55,16 +55,38 @@ function tgetChannelList() {
     return tgetRESTData(`${tbaseurl}/guide/channels`);
 }
 
-// takes a path from the output of tgetChannels() and returns a details data structure
-function tgetChannelDetails(path) {
-    return tgetRESTData(`${tbaseurl}${path}`);
-}
-
+//get details about the server
 function tgetServerInfo() {
     return tgetRESTData(`${tbaseurl}/server/info`);
 }
 
 // get data about the attached harddrives
 function tgetHarddrive() {
-    return tgetRESTData(`${tbaseurl}/server/harddrives`).then(result => {return result});
+    return tgetRESTData(`${tbaseurl}/server/harddrives`);
+}
+
+// get a list of scheduled recordings
+function tgetScheduledRecordings() {
+    return tgetRESTData(`${tbaseurl}/guide/airings`);
+}
+
+// get a list of the completed recordings
+function tgetRecordings() {
+    return tgetRESTData(`${tbaseurl}/recordings/airings`);
+}
+
+// get details about a live channel, or recording
+function tgetWatchDetails(path) {
+    return tpostRESTData(`${tbaseurl}${path}/watch`,'');
+}
+
+// return details from a Channel, Schedule, Recording endpoint
+function tgetDetails(path) {
+    return tgetRESTData(`${tbaseurl}${path}`);
+}
+
+// return the details from a list of channels, schedules, recordings, endpoints
+//  NOTE: the batch endpoint will not accept more than 50 entries
+function tbatchDetails(list) {
+    tpostRESTData(`${tbaseurl}/batch`, list);
 }

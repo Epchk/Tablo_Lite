@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html><head>
+<meta charset="UTF-8">
 <!--
 Menu inspired by https://codepen.io/cassandraPaige/pen/ZEYmMJg
 
@@ -77,6 +78,7 @@ video {
 
 <!--Load the hls video player to play .m3u8 playlists used by Tablo-->
 <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
+<!-- load my tablo api library -->
 <script src="tablo_ota.js"></script>
 <script>
 
@@ -98,39 +100,10 @@ function getCookie(name) {
 /* save the tablo ip address to a cookie */
 function save_tablo_ip() {
 	var input = document.getElementById("tablo_ip_entry").value;
-	document.cookie = "tablo_ip_addr=" + input + ";max-age=63115200"
-}
-
-//Call Tablo REST api
-
-async function tGetRESTData(url, worker) {
-  try {
-    const response = await fetch(url);
-    if (!response.ok) {throw new Error(`Response status: ${response.status} (${url})`); }
-
-    const json = await response.json();
-	if (json.error.details) {
-		throw new Error(`REST Error: ${json.error.description} (${url})`);
-		alert(`REST Error: ${json.error.description} (${url})`); //DEBUG
-	} else {
-		worker();
-	}
-  } catch (error) { console.error(error.message); }
-}
-
-async function tPostRESTData(url, data, worker) {
-  try {
-    const response = await fetch(url, {method: "POST", body: data});
-    if (!response.ok) {throw new Error(`Response status: ${response.status} (${url})`); }
-
-    const json = await response.json();
-	if (json.error.details) {
-		throw new Error(`REST response: ${json.error.description} (${url})`);
-		alert(`REST Error: ${json.error.description} (${url})`); //DEBUG
-	} else {
-		worker();
-	}
-  } catch (error) { console.error(error.message); }
+	const tv_listings_url = document.getElementById("tv_listings_url").value;
+	document.cookie = "tablo_ip_addr=" + input + ";max-age=63115200; SameSite=Strict";
+	if (tv_listings_url) document.cookie = "tv_listings_url=" + tv_listings_url + ";max-age=63115200; SameSite=Strict";
+	bootstrap();
 }
 
 //User Interaction
@@ -157,15 +130,16 @@ async function doHome() {
 		}
 	});
 
-	//Inject the channel detail into the Home section
+	//Get list of channels and nject the channel detail into the Home section
 	tgetChannelList().then(channels => {
 		document.getElementById("tchannel_count").innerHTML = Object.keys(channels).length;
 		document.getElementById("tchannels").innerHTML = "<tr><th>Channel</th><th>Name</th><th>Quality</th></tr>";
 
 		for (uri of channels) {
-			tgetChannelDetails(uri).then(channel => {
+			//Inject details for each channel
+			tgetDetails(uri).then(channel => {
 				document.getElementById("tchannels").innerHTML += '<tr id="' + channel.object_id + '"><td>' + 
-				'<a href="#watch" onClick="doWatch(\'' + channel.object_id + '\')">' + channel.channel.major + "." + channel.channel.minor + "</a></td><td>" + 
+				'<a href="#watch" onClick="doWatch(\'' + channel.path + '\')">' + channel.channel.major + "." + channel.channel.minor + "</a></td><td>" + 
 				channel.channel.call_sign + "</td><td>" + 
 				channel.channel.resolution + "</td></tr>";
 			});
@@ -173,134 +147,69 @@ async function doHome() {
 	});
 }
 
+/* Callback to load the Schedule tab: show currently scheduled recordings */
 async function doSchedule() {
-	const base_url = "http://" + document.getElementById("tablo_ip_entry").value + ":8885";
-	const url = base_url + "/guide/airings";
-		
-	try {
-		const response = await fetch(url);
-		if (!response.ok) {throw new Error(`Response status: ${response.status} (${url})`); }
-
-		const json = await response.json();
-		if (json.error) {
-			throw new Error(`REST response: ${json.error.description} (${url})`);
-			alert(`REST Error: ${json.error.description} (${url})`); //DEBUG
-		} else {
-			console.log(json);
-		}
-		
+	//inject the list of scheduled recordings
+	tgetScheduledRecordings().then(recordings => {	
 		document.getElementById('tschedule_list').innerHTML =
 		'<tr><th>ID</th><th>Name</th><th>Channel</th><th>Start</th><th>Duration</th><th>Delete?</th></tr>';
-		document.getElementById("tschedule_count").innerHTML = Object.keys(json).length;
-		for (path of json) {
-			try {
-				const url = base_url + path ;
-				const response = await fetch(url);
-					
-				if (!response.ok) {
-					throw new Error(`Response status: ${response.status}`);
-				}
-				const recording = await response.json();
-				if (recording.error) {
-					throw new Error(`REST response: ${recording.error.description} (${url})`);
-					alert(`REST Error: ${recording.error.description} (${url})`); //DEBUG
-				} else {
-					console.log(recording);
-				}
+		document.getElementById("tschedule_count").innerHTML = Object.keys(recordings).length;
 
+		for (path of recordings) {
+			//Inject details of each recording
+			tgetDetails(path).then(recording => {
 				document.getElementById('tschedule_list').innerHTML +=	`<tr><td>${recording.object_id}</td><td>${recording.airing_details.show_title}</td><td>${recording.airing_details.channel.channel.call_sign}</td><td>${recording.airing_details.datetime}</td><td>${recording.airing_details.duration}</td><td>-</td></tr>`;
-			
-			} catch (error) {
-				alert("An error was encountered trying to reach :: " + error.message);
-				console.error(error.message);
-			}
+			});
 		}
-	} catch (error) { console.error(error.message); }
+	});
 }
 	
-	
-
-
-
 //* Callback to load the Recordings section and list all airings */
 async function doRecordings() {
-  const base_url = "http://" + document.getElementById("tablo_ip_entry").value + ":8885";
-  try {
-	const url = base_url + "/recordings/airings";
-    const response = await fetch(url);
-    if (!response.ok) {
-      throw new Error(`Response status: ${response.status}`);
-    }
+	const base_url = "http://" + document.getElementById("tablo_ip_entry").value + ":8885";
 
-    const json = await response.json();
-
-	document.getElementById('Trecordings').innerHTML = "<tr><th>ID</th><th>Name</th><th>Duration</th><th>Is Clean</th><th>Resolution</th><th>Channel</th><th>Data</th></tr>\n";
-	document.getElementById("trec_count").innerHTML = Object.keys(json).length;
+	//Inject list of completed recordings
+	tgetRecordings().then(recordings => {
+		document.getElementById('Trecordings').innerHTML = "<tr><th>ID</th><th>Name</th><th>Duration</th><th>Is Clean</th><th>Resolution</th><th>Channel</th><th>Data</th></tr>\n";
+		document.getElementById("trec_count").innerHTML = Object.keys(recordings).length;
 	
-	for (path of json) {
-		try {
-			const url = base_url + path ;
-			const response = await fetch(url);
-					
-			if (!response.ok) {
-				throw new Error(`Response status: ${response.status}`);
-			}
-
-			const recording = await response.json();
-			
-			document.getElementById('Trecordings').innerHTML += "<tr><td>" + 
-				recording.object_id + "</td><td>" +
-				'<a href="#watch" onClick="doWatch(\'' + path + '\')">' + recording.airing_details.show_title + "</a></td><td>" + 
-				Math.round(recording.video_details.duration/60) + "m </td><td>" +
-				recording.video_details.clean + "</td><td>" +
-				recording.video_details.height + "</td><td>" +
-				recording.airing_details.channel.channel.call_sign + "</td><td>" + 
-				recording.airing_details.datetime +	"</td></tr>\n";
-		} catch (error) {
-			alert("An error was encountered trying to reach :: " + error.message);
+		for (path of recordings) {
+			tgetDetails(path).then(recording => {
+				document.getElementById('Trecordings').innerHTML += "<tr><td>" + 
+					recording.object_id + "</td><td>" +
+					'<a href="#watch" onClick="doWatch(\'' + recording.path + '\')">' + recording.airing_details.show_title + "</a></td><td>" + 
+					Math.round(recording.video_details.duration/60) + "m </td><td>" +
+					recording.video_details.clean + "</td><td>" +
+					recording.video_details.height + "</td><td>" +
+					recording.airing_details.channel.channel.call_sign + "</td><td>" + 
+					recording.airing_details.datetime +	"</td></tr>\n";
+			});
 		}
-	}
-
-  } catch (error) {
-	alert("An error was encountered trying to reach :: " + error.message);
-    console.error(error.message);
-  }
+	});
 }
 
 /* Callback to load the Watch section and start the selected video stream */
-async function doWatch(channel) {
-	const base_url = "http://" + document.getElementById("tablo_ip_entry").value + ":8885";
-  try {
-    const url = base_url + channel + "/watch";
-    const response = await fetch(url, {method: "POST"});
-    if (!response.ok) {throw new Error(`Response status: ${response.status} (${url})`); }
-
-    const json = await response.json();
-	if (json.error) {
-		throw new Error(`REST Error: ${json.error.description} (${url})`);
-		alert(`REST Error: ${json.error.description} (${url})`); //DEBUG
-	} else {
-		document.getElementById('playlist_url').innerHTML = `The playlist URL is "${json.playlist_url}".`;
+//2903135 The Suicide Squad (2021)
+async function doWatch(path) {
+	tgetWatchDetails(path).then(stream => {
+		document.getElementById('playlist_url').innerHTML = `The playlist URL is "${stream.playlist_url}".`;
 	
 		/* EXPERIMENTAL use HLS to play video directly from Tablo */
 		var video = document.getElementById('video');
 		if(Hls.isSupported()) {
 			//var hls = new Hls();
 			hls.attachMedia(video);
-			hls.loadSource(json.playlist_url);
+			hls.loadSource(stream.playlist_url);
 			video.play();
-			
-			//hls.stopLoad();
 		} else if (video.canPlayType('application/vnd.apple.mpegurl')) {
-			video.src = json.playlist_url;
+			video.src = stream.playlist_url;
 			video.addEventListener('loadedmetadata',function() {
-			video.play();
+				video.play();
 			});
 		} else {
 			alert("Unable to play the video. Note: the hls.js open source javascript player is needed for this to work.");
 		}
-	}
-  } catch (error) { console.error(error.message); }
+	});
 }
 
 // callback for the stop button below the video
@@ -316,8 +225,10 @@ function doSettings() {
 //BOOSTRAP
 function bootstrap() {
 	let tablo_ip_addr = getCookie('tablo_ip_addr');
+	const tv_listings_url = getCookie('tv_listings_url');
 	if (tablo_ip_addr) {
 		document.getElementById("tablo_ip_entry").value = tablo_ip_addr;
+		if (tv_listings_url) document.getElementById("tv_listings_url").href = tv_listings_url;
 		doHome();
 		location.href = location.href.replace(/#.*$/,'') + "#home";
 	} else {
@@ -344,12 +255,13 @@ function bootstrap() {
 <h1>Setup</h1>
 <form>
 <table>
-	<tr><th>Tablo IP Address:</th><td><input id="tablo_ip_entry" type="text" required pattern="((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)(\.|$)){4}"/> </i>i.e. 10.10.10.2</i></td></tr>
+	<tr><th>Tablo IP Address:</th><td><input id="tablo_ip_entry" type="text" required pattern="((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)(\.|$)){4}" title="Enter a valid IPv4 Address"/> <i>i.e. 10.10.10.2</i></td></tr>
+	<tr><th>Listings Provider URL:</th><td><input id="tv_listings_url" type="text" pattern="(https:\/\/|http:\/\/)?[a-zA-Z0-9]{2,}(\.[a-zA-Z0-9]{2,})(\.[a-zA-Z0-9]{2,})?\/([a-zA-Z0-9\.\/\-]*)" title="Leave blank or provide a valid URL"/> <i>will be displayed beside the channel listing</i></td></tr>
 </table>
 <input type="submit" value="Save" onclick="save_tablo_ip();">
 </form>
 <br>
-<p>This value will be saved in a cookie in your web browser. If you remove this cookie, you will need to re-enter it again.</p>
+<p>These values will be saved in a cookies in your web browser. If you remove the cookies, you will need to re-enter.</p>
 </div>
 </section>
 
@@ -364,6 +276,7 @@ function bootstrap() {
 </table>
 
 <h2>Active Channels (<span id="tchannel_count"></span>)</h2>
+<p><a id="tv_listings_url" href="https://www.ontvtonight.com/ca/guide/listings/TorontoNight.html" target="_blank">Tonight's OTA TV Listings</a></p>
 <table id="tchannels">
 </table>
 </div>
