@@ -122,7 +122,7 @@ async function doHome() {
 		for (uri of channels) {
 			//Inject details for each channel
 			tgetDetails(uri).then(channel => {
-				document.getElementById("tchannels").innerHTML += `<tr id="${channel.object_id}"><td><a href="#watch" onClick="doWatch("${channel.path}")>${channel.channel.major}.${channel.channel.minor}</a></td><td>` + 
+				document.getElementById("tchannels").innerHTML += `<tr id="${channel.object_id}"><td><a href="#watch" onclick="doWatch('${channel.path}');">${channel.channel.major}.${channel.channel.minor}</a></td><td>` + 
 				`${channel.channel.call_sign}</td><td>` + 
 				`${channel.channel.resolution}</td></tr>`;
 			});
@@ -159,7 +159,7 @@ async function doRecordings() {
 		for (path of recordings) {
 			tgetDetails(path).then(recording => {
 				document.getElementById('Trecordings').innerHTML += `<tr><td>${recording.object_id}</td><td>` +
-					`<a href="#watch" onClick="doWatch(${recording.path})">${recording.airing_details.show_title}</a></td><td>` + 
+					`<a href="#watch" onClick="doWatch('${recording.path}');">${recording.airing_details.show_title}</a></td><td>` + 
 					Math.round(recording.video_details.duration/60) + "m </td><td>" +
 					`${recording.video_details.clean}</td><td>` +
 					`${recording.video_details.height}</td><td>` +
@@ -174,7 +174,7 @@ async function doRecordings() {
 async function doWatch(path) {
 	tgetWatchDetails(path).then(stream => {
 		document.getElementById('playlist_url').innerHTML = `The playlist URL is "${stream.playlist_url}".`;
-	
+
 		/* EXPERIMENTAL use HLS to play video directly from Tablo */
 		var video = document.getElementById('video');
 		if(Hls.isSupported()) {
