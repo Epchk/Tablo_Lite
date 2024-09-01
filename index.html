@@ -110,6 +110,7 @@ async function doHome() {
 	tgetHarddrive().then(hd => {
 		document.getElementById("Thd_info").innerHTML = '';
 		for (drive of hd) {
+			//NOTE: this will MESS UP if there is more than one HDD (like on the newer models that have an internal HD)
 			document.getElementById("Thd_info").innerHTML += `<th>${drive.name}</th><td>${drive.free_mib} MB available of ${drive.size_mib} MB</td>`;
 		}
 	});
@@ -201,6 +202,23 @@ function StopVideo() {
 }
 /* Callback to load the Settings section. Not yet implemented. */
 function doSettings() {
+	document.getElementById("device_settings").innerHTML = '';
+	tgetSettings().then(setting => {
+		tgetDetails(setting.recording_quality).then(quality => {
+			document.getElementById("device_settings").innerHTML += `<tr><th>Recording Quality</th><td>${quality.name}</td></th>`;
+		})
+		tgetDetails(setting.livetv_quality).then(quality => {
+			document.getElementById("device_settings").innerHTML += `<tr><th>Live TV Quality</th><td>${quality.name}</td></th>`;
+		})
+		document.getElementById("device_settings").innerHTML += `<tr><th>LED status</th><td>${setting.led}</td></tr>\n` +
+			`<tr><th>extend live recordings</th><td>${setting.extend_live_recordings}</td></tr>\n` +
+			`<tr><th>auto delete recordings</th><td>${setting.auto_delete_recordings}</td></tr>\n` +
+			`<tr><th>exclude duplicates</th><td>${setting.exclude_duplicates}</td></tr>\n` +
+			`<tr><th>fast live startup</th><td>${setting.fast_live_startup}</td></tr>\n` +
+			`<tr><th>Audio Format</th><td>${setting.audio}</td></tr>\n` +
+			`<tr><th>data collection</th><td>${setting.data_collection}</td></tr>\n` +
+			`<tr><th>preferred audio track</th><td>${setting.preferred_audio_track}</td></tr>\n`;
+	});
 }
 
 //BOOSTRAP
@@ -225,7 +243,7 @@ function bootstrap() {
 <a href="#home" onclick="doHome()">&#8962;</a><!--Home-->
 <a href="#recordings" onclick="doRecordings()">&#9991;</a><!--Recordings-->
 <a href="#schedule" onclick="doSchedule()">&#9998;</a><!--Schedule-->
-<a href="#settings">&#9881;</a><!--Settings-->
+<a href="#settings" onclick="doSettings()">&#9881;</a><!--Settings-->
 <a href="#about">?</a><!--About-->
 <!--<a href="#watch">W</a><!--Watch-->
 </nav>
@@ -292,13 +310,7 @@ function bootstrap() {
 <div>
 <h1>Settings</h1>
 
-<p>Settings is not yet functional.</p>
-
-<table>
-	<tr><th>Tablo IP Address:</th><td><input type="text"></input></td></tr>
-	<tr><th>Tablo Name:</th><td><input type="text"></input></td></tr>
-	<tr><th>Recording Quality:</th><td><input type="select"></input></td></tr>
-	<tr><th>Live TV Quality:</th><td><input type="select"></input></td></tr>
+<table id="device_settings">
 </table>
 </div>
 </section>
@@ -322,14 +334,20 @@ function bootstrap() {
 <ul>
  <li>Official <a href="https://community.tablotv.com/c/tablo-apps/third-party-apps-plex/17">3rd Party Apps</a> in the Tablo Community Forums.</li>
  <li>Official <a href="https://www.tablotv.com/">Tablo</a> website.</li>
- <li>Official <a href="http://my.tablotv.com/">Tablo</a> Web UI.</li>
+ <li>Official <a href="http://my.tablotv.com/">TabloTV</a> Web UI.</li>
  <li><a href="https://jessedp.github.io/tablo-api-docs/#tablo-api-introduction">Tablo API - unofficial</a></li>
-
  <li><a href="https://github.com/video-dev/hls.js/"> hls.js</a> video player to support m3u8 playlists.</li>
+</ul>
+ 
+<h2>Saving Recordings</h2>
+<p>Tablo Lite does not support saving recordings from the device but you can use ffmpeg to exact a recording and save it to a file.</p>
+
+<code>ffmpeg -i "stream_url" -c copy -bsf:a aac_adtstoasc "filename.mp4"</code>
+
+<ul>
+	<li><i>stream_url</i> is the url of the stream that is displayed at the top when playing a recording.</li>
+	<li><i>filename</i> is the name of the file to save the recording.</li>
 </ul>
 </div>
 </section>
-</div>
-
-</body>
-</html>
+</div></body></html>
