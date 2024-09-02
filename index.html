@@ -9,6 +9,20 @@ html symbols: https://www.toptal.com/designers/htmlarrows/symbols/
 Tablo API Reference: https://jessedp.github.io/tablo-api-docs/#tablo-api-introduction
 -->
 <style>
+html {
+	font-family: Helvetica;
+}
+th {
+	background: #04E;
+	color: #fff;
+	padding: 0.125rem 1rem 0.125rem 1rem;
+}
+table.byrow th {
+	text-align: right;
+}
+td {
+	padding: 0rem 1rem 0rem 1rem;
+}
 
 .container {
   min-height: 100vh;
@@ -53,7 +67,7 @@ section:target {
 }
 
 section:target div {
-	padding-left: 100px;
+	padding-left: 100px; /* there has got to be a better way to keep the sidebar and section from overlapping. */
 }
 
 /* Change the width and height values if you want the video player to be a different size. */
@@ -272,7 +286,7 @@ function bootstrap() {
 <section id="home"><!-- ################################################# -->
 <div>
 <h1>Home</h1>
-<table>
+<table class="byrow">
 	<tr><th>Tablo Name:</th><td id="Tserver_name"><td></tr>
 	<tr><th>Tablo Model:</th><td id="Tserver_model"><td></tr>
 	<tr><th>Tablo Firmware:</th><td id="Tserver_version"><td></tr>
@@ -281,8 +295,7 @@ function bootstrap() {
 
 <h2>Active Channels (<span id="tchannel_count"></span>)</h2>
 <p><a id="tv_listings_link" href="https://www.ontvtonight.com/ca/guide/listings/TorontoNight.html" target="_blank">Tonight's OTA TV Listings</a></p>
-<table id="tchannels">
-</table>
+<table id="tchannels"></table>
 </div>
 </section>
 
@@ -305,7 +318,6 @@ function bootstrap() {
 
 <table id="tschedule_list">
 	<tr><th>ID</th><th>Name</th><th>Channel</th><th>Start</th><th>Duration</th><th>Delete?</th></tr>
-	<tr><td>0</td><td>Placeholder</td><td>1</td><td>1970-01-01 00:00</td><td>60</td><td><a href="">Delete</td></tr>
 </table>
 
 </div>
@@ -315,8 +327,7 @@ function bootstrap() {
 <div>
 <h1>Settings</h1>
 
-<table id="device_settings">
-</table>
+<table class="byrow" id="device_settings"></table>
 </div>
 </section>
 
