@@ -20,7 +20,7 @@ The need to serve them over http is due to the tablo device not having an https 
 
 ### Sample home (default) screen
 
-![Tablo Lite Home screen - alpha](https://github.com/user-attachments/assets/a1d609c8-c2d3-438b-88b8-5c4c7424d974)
+![Tablo Lite Home screen - alpha](https://github.com/Epchk/Tablo_Lite/blob/main/screenshots/home%20screen.jpg?raw=true)
 
 Tablo device information is displayed at the top with a list of the configured channels below. Selecting a channel switches to the watch interface and starts playing the live TV channel from the Tablo device.
 
