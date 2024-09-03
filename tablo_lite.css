@@ -1,0 +1,66 @@
+html {
+	font-family: Helvetica;
+}
+th {
+	background: #04E;
+	color: #fff;
+	padding: 0.125rem 1rem 0.125rem 1rem;
+}
+table.byrow th {
+	text-align: right;
+}
+td {
+	padding: 0rem 1rem 0rem 1rem;
+}
+
+.container {
+  min-height: 100vh;
+}
+
+nav a {
+    font-size: 40px;
+    color: #fff;
+    text-decoration: none;
+    padding: 20px;
+    text-align: center;
+}
+
+nav {
+    position: fixed;
+    left: 0;
+    z-index: 50;
+    display: flex;
+    justify-content: space-around;
+    flex-direction: column;
+    height: 100vh;
+    background: #027;
+}
+
+section {
+    position: absolute;
+    top: 0;
+    height: 100vh;
+    width: 0;
+    opacity: 0;
+    display: flex;
+
+} 
+
+/* Styles applied on trigger */
+section:target {
+    opacity: 1;
+    position: absolute;
+    width: 100%;
+    height: 95%;
+    z-index: 10;
+}
+
+section:target div {
+	padding-left: 100px; /* there has got to be a better way to keep the sidebar and section from overlapping. */
+}
+
+/* Change the width and height values if you want the video player to be a different size. */
+video {
+	height: 720px;
+	width: 1280px;
+}
