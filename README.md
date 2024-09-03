@@ -5,9 +5,16 @@ If you are looking for the official web app for the Tablo, it's at ![http://my.t
 
 ## Installation
 
-Put the "index.html" and "tablo_ota.js" files in the same directory. They can be loaded directly into a web browser using the "file:" method or served from a web server. If they are served from a web server, they must be over http (not https).
+Put the following files into a directory. It can be local to your PC or on a web server that serves static http (not https)<sup>(1)</sup> conent.
 
-The need to serve them over http is due to the tablo device not having an https server and modern browsers not supporting mixed security functionality.
+* index.html
+* tablo_lite.css
+* tablo_lite.js
+* tablo_ota.js
+
+To run it, load the index.html in a web browser running on a computer that is on the same network as your TabloTV device.
+
+(1) The need to serve them over http is due to the tablo device not having an https server and modern browsers not supporting mixed security functionality.
 
 ## Current Functionality
 
