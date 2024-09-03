@@ -62,7 +62,7 @@ section:target {
     opacity: 1;
     position: absolute;
     width: 100%;
-    height: 100%;
+    height: 95%;
     z-index: 10;
 }
 
@@ -149,6 +149,17 @@ async function doHome() {
 
 /* Callback to load the Schedule tab: show currently scheduled recordings */
 async function doSchedule() {
+	//inject channel list into new schedule form
+	document.getElementById('sched_channel').innerHTML='';
+	tgetChannelList().then(list => {
+		for (path of list) {
+			tgetDetails(path).then(channel => {
+				const network_name = channel.channel.network ? channel.channel.network : channel.channel.call_sign;
+				document.getElementById('sched_channel').innerHTML += `<option value="${channel.path}">${network_name} ${channel.channel.major}.${channel.channel.minor} (${channel.channel.resolution})</option>`;
+			});
+		}
+	});
+
 	//inject the list of scheduled recordings
 	tgetScheduledRecordings().then(recordings => {	
 		document.getElementById('tschedule_list').innerHTML =
@@ -158,16 +169,37 @@ async function doSchedule() {
 		for (path of recordings) {
 			//Inject details of each recording
 			tgetDetails(path).then(recording => {
-				document.getElementById('tschedule_list').innerHTML +=	`<tr><td>${recording.object_id}</td><td>${recording.airing_details.show_title}</td><td>${recording.airing_details.channel.channel.call_sign}</td><td>${recording.airing_details.datetime}</td><td>${recording.airing_details.duration}</td><td>-</td></tr>`;
+				document.getElementById('tschedule_list').innerHTML += `<tr><td>${recording.object_id}</td><td>${recording.airing_details.show_title}</td><td>${recording.airing_details.channel.channel.call_sign}</td><td>${recording.airing_details.datetime}</td><td>${recording.airing_details.duration}</td><td><a href="#schedule" onclick="deleteSchedule('${recording.program_path}');">Delete</a></td></tr>`;
 			});
 		}
 	});
 }
-	
+
+/* Callback to save schedule */
+function save_new_schedule() {
+	const schedule_date=document.getElementById('sched_date').value; //2024-09-03
+	const schedule_time=document.getElementById('sched_time').value; //14:30
+	tScheduleNewRecording(
+		document.getElementById('sched_title').value, 
+		schedule_date.split('-')[0],
+		schedule_date.split('-')[1],
+		schedule_date.split('-')[2],
+		schedule_time.split(':')[0],
+		schedule_time.split(':')[1],
+		document.getElementById('sched_duration').value,
+		document.getElementById('sched_channel').value).then(value => {
+			document.getElementById('schedule_recording').reset();
+			doSchedule();
+		});
+}
+
+/* delete an existing scheduled recording */
+function deleteSchedule(path) {
+	tRemoveSchedule(path).then(rv => {doSchedule();});
+}
+
 //* Callback to load the Recordings section and list all airings */
 async function doRecordings() {
-	const base_url = "http://" + document.getElementById("tablo_ip_entry").value + ":8885";
-
 	//Inject list of completed recordings
 	tgetRecordings().then(recordings => {
 		document.getElementById('Trecordings').innerHTML = "<tr><th>ID</th><th>Name</th><th>Duration</th><th>Is Clean</th><th>Resolution</th><th>Channel</th><th>Data</th></tr>\n";
@@ -294,7 +326,7 @@ function bootstrap() {
 </table>
 
 <h2>Active Channels (<span id="tchannel_count"></span>)</h2>
-<p><a id="tv_listings_link" href="https://www.ontvtonight.com/ca/guide/listings/TorontoNight.html" target="_blank">Tonight's OTA TV Listings</a></p>
+<p><a id="tv_listings_link" href="https://www.ontvtonight.com/ca/guide/listings/TorontoNight.html" target="_blank">OTA TV Listings</a></p>
 <table id="tchannels"></table>
 </div>
 </section>
@@ -312,7 +344,16 @@ function bootstrap() {
 
 <h2>Schedule a New Recording</h2>
 
-<p>Not yet implemented.</p>
+<form id="schedule_recording">
+<table>
+	<tr><th>Name:</th><td><input id="sched_title" type="text" required/></td></tr>
+	<tr><th>Date:</th><td><input id="sched_date" type="date" required/> in your computer's timezone.</td></tr>
+	<tr><th>Time:</th><td><input id="sched_time" type="time" required/></td></tr>
+	<tr><th>Duration:</th><td><input id="sched_duration" type="number" required min="1" max="86400"/> in minutes.</td></tr>
+	<tr><th>Channel:</th><td><select id="sched_channel" required><option>Placeholder</option></select></td></tr>
+</table>
+<input type="submit" value="Save" onclick="save_new_schedule();">
+</form>
 
 <h2>Scheduled Recordings (<span id="tschedule_count"></span>)</h2>
 

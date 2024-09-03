@@ -19,6 +19,7 @@ async function tgetRESTData(url) {
 }
 
 async function tpostRESTData(url, data) {
+    console.log(data);
     try {
         const response = await fetch(url, {method: "POST", body: data});
         if (!response.ok) {throw new Error(`Response status: ${response.status} (${url})`); }
@@ -46,6 +47,20 @@ async function tpatchRESTData(url, data) {
     } catch (error) { console.error(error.message); }
 }
 
+async function tdeleteRESTData(url) {
+    try {
+        const response = await fetch(url, {method: "DELETE"});
+        if (!response.ok) {throw new Error(`Response status: ${response.status} (${url})`); }
+  
+        const json = await response.json();
+        if (json.error) {
+            throw new Error(`REST Error: ${json.error.description} (${url})`);
+        } else {
+            return json;
+        }
+    } catch (error) { console.error(error.message); }   
+}
+
 // API Calls - these should be exported
 //  All API calls return a promise for a JSON structure
 //  if an error is encountered check the error log for details
@@ -70,6 +85,57 @@ function tgetScheduledRecordings() {
     return tgetRESTData(`${tbaseurl}/guide/airings`);
 }
 
+// post a new schedule to record
+function tpostSchedule(data) {
+    return tpostRESTData(`${baseurl}/guide/programs/`, data);
+}
+
+// manually schedule a new recording. timezone is taken from the local computre, month is a number. hour uses 24 hour clock.
+/*
+{
+    "schedule":{
+        "rule":"all",
+        "offsets":{"start":0,"end":0,"source":"none"}
+    },
+    "schedule_rule":"all",
+    "config":{
+        "title":"new test recording",
+        "channel_path":"/guide/channels/357011",
+        "duration":1800,
+        "kind":"once",
+        "once":{"year":"2024","month":"09","day":"30","hour":"08","minute":"00","timezone":"America/Toronto"}}}
+*/
+function tScheduleNewRecording(title, year, month, day, hour, minute, duration, channel_path) {
+    /* this is the minimum data needed in the POST */
+    var data={
+        "schedule":{
+            "rule":"all",
+            "offsets":{"start":0,"end":0,"source":"none"}
+        },
+        "schedule_rule":"all",
+        "config":{
+            "title":"test",
+            "channel_path":"/guide/channels/357025",
+            "duration":3600,
+            "kind":"once",
+            "once":{"year":2038,"month":1,"day":19,"hour":3,"minute":14,"timezone":"America/Toronto"}
+        }
+    };
+    data.config.once.timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+    data.config.title=title;
+    data.config.once.year=parseInt(year);
+    data.config.once.month=parseInt(month);
+    data.config.once.day=parseInt(day);
+    data.config.once.hour=parseInt(hour);
+    data.config.once.minute=parseInt(minute);
+    data.config.duration=duration*60;
+    data.config.channel_path=channel_path;
+    return tpostSchedule(JSON.stringify(data));
+}
+
+function tRemoveSchedule(path) {
+    return tdeleteRESTData(`${tbaseurl}${path}`)
+}
 // get a list of the completed recordings
 function tgetRecordings() {
     return tgetRESTData(`${tbaseurl}/recordings/airings`);
