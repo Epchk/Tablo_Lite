@@ -55,8 +55,13 @@ section:target {
     z-index: 10;
 }
 
-section:target div {
+section:target > div {
 	padding-left: 100px; /* there has got to be a better way to keep the sidebar and section from overlapping. */
+}
+
+.page_numbers {
+    padding: 3px;
+    font-size: large;
 }
 
 /* Change the width and height values if you want the video player to be a different size. */
