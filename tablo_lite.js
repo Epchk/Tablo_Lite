@@ -30,7 +30,7 @@ function doSetup() {
 }
 
 /* Callback to load the Home tab: device info, hd info, channel list */
-async function doHome() {
+async function doHome(page = 1) {
   	//Inject the server info into the Home section
 	tgetServerInfo().then(server => {
 		document.getElementById("Tserver_name").innerHTML = `${server.name} (${server.local_address})`;
@@ -49,9 +49,36 @@ async function doHome() {
 
 	//Get list of channels and nject the channel detail into the Home section
 	tgetChannelList().then(channels => {
-		document.getElementById("tchannel_count").innerHTML = Object.keys(channels).length;
-		document.getElementById("tchannels").innerHTML = "<tr><th>Channel</th><th>Name</th><th>Quality</th></tr>";
+		const start_index = (page - 1) * 50; end_index = page * 50;
+		let pages = channels.length;
 
+		document.getElementById("tchannel_count").innerHTML = Object.keys(channels).length;
+
+		document.getElementById('channel_pages').innerHTML = '';
+		for (let i = 1; i <= Math.ceil(pages / 50); i++) {
+			document.getElementById('channel_pages').innerHTML += `<a href="#home" onclick="doHome('${i}')">${i}</a> `;
+		}
+
+		document.getElementById("tchannels").innerHTML = "<tr><th>Channel</th><th>Name</th><th>Quality</th></tr>";
+		tbatchDetails(JSON.stringify(channels.slice(start_index, end_index))).then(list => {
+
+			let i = start_index + 1;
+			for (path in list) {
+				const channel = list[path];
+
+				document.getElementById("tchannels").innerHTML += `<tr id="${channel.object_id}"><td>` + 
+				`<a href="#watch" onclick="doWatch('${channel.path}');">${channel.channel.major}.${channel.channel.minor}</a></td><td>` + 
+				`${channel.channel.call_sign}</td><td>` + 
+				`${channel.channel.resolution}</td></tr>`;
+			}
+		});
+	});
+}
+			
+
+
+
+/*
 		for (uri of channels) {
 			//Inject details for each channel
 			tgetDetails(uri).then(channel => {
@@ -60,8 +87,7 @@ async function doHome() {
 				`${channel.channel.resolution}</td></tr>`;
 			});
 		}
-	});
-}
+*/
 
 /* Callback to load the Schedule tab: show currently scheduled recordings */
 async function doSchedule() {
