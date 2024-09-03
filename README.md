@@ -16,6 +16,8 @@ The need to serve them over http is due to the tablo device not having an https 
 - List available channels and play live show directly in the browser. Does not include guide data.
 - List recordings and play directly from the device.
 - List scheduled recordings.
+- Add manually scheduled recordings.
+- Delete scheduled recording.
 - Display device settings.
 
 ### Sample home (default) screen
@@ -26,8 +28,6 @@ Tablo device information is displayed at the top with a list of the configured c
 
 ## Planned Functionality
 
-- Add manually scheduled recordings.
-- Delete scheduled recording.
 - Delete failed recordings.
 - Paginate channels, recordings, and schedule to a maximum of 50 lines per page.
 
