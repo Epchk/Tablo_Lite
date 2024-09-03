@@ -26,6 +26,7 @@ Tablo device information is displayed at the top with a list of the configured c
 
 ## Planned Functionality
 
+- Add manually scheduled recordings.
 - Delete scheduled recording.
 - Delete failed recordings.
 - Paginate channels, recordings, and schedule to a maximum of 50 lines per page.
@@ -34,6 +35,5 @@ Tablo device information is displayed at the top with a list of the configured c
 
 These may not be possible with 3rd party apps like this one.
 
-- Add manually scheduled recordings.
 - Update settings on the tablo device.
 - Rescan/update the available OTA channels.
