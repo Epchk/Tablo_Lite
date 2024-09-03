@@ -199,24 +199,46 @@ function deleteSchedule(path) {
 }
 
 //* Callback to load the Recordings section and list all airings */
-async function doRecordings() {
+async function doRecordings(page = 1) {
 	//Inject list of completed recordings
 	tgetRecordings().then(recordings => {
-		document.getElementById('Trecordings').innerHTML = "<tr><th>ID</th><th>Name</th><th>Duration</th><th>Is Clean</th><th>Resolution</th><th>Channel</th><th>Data</th></tr>\n";
+		const start_index = (page - 1) * 50; end_index = page * 50;
+		let pages = recordings.length;
+
+		document.getElementById('recording_pages').innerHTML = '';
+		for (let i = 1; i <= Math.ceil(pages / 50); i++) {
+			document.getElementById('recording_pages').innerHTML += `<a href="#recordings" onclick="doRecordings('${i}')">${i}</a> `;
+		}
+
+		document.getElementById('Trecordings').innerHTML = "<tr><th>ID</th><th>Name</th><th>Duration</th><th>Is Clean</th><th>Resolution</th><th>Channel</th><th>Data</th><th>Action</th></tr>\n";
 		document.getElementById("trec_count").innerHTML = Object.keys(recordings).length;
-	
-		for (path of recordings) {
-			tgetDetails(path).then(recording => {
-				document.getElementById('Trecordings').innerHTML += `<tr><td>${recording.object_id}</td><td>` +
+
+		tbatchDetails(JSON.stringify(recordings.slice(start_index, end_index))).then(list => {
+
+			let i = start_index + 1;
+			for (path in list) {
+				const recording = list[path];
+				document.getElementById('Trecordings').innerHTML += `<tr><td>${i} - ${recording.object_id}</td><td>` +
 					`<a href="#watch" onClick="doWatch('${recording.path}');">${recording.airing_details.show_title}</a></td><td>` + 
 					Math.round(recording.video_details.duration/60) + "m </td><td>" +
 					`${recording.video_details.clean}</td><td>` +
 					`${recording.video_details.height}</td><td>` +
 					`${recording.airing_details.channel.channel.call_sign}</td><td>` + 
-					`${recording.airing_details.datetime}</td></tr>\n`;
-			});
-		}
+					`${recording.airing_details.datetime}</td><td>` +
+					`<a href=#recordings onclick="deleteRecording('${recording.path}', '${recording.airing_details.show_title}')">Delete</a></tr>\n`;
+					i++;
+			}
+		})
 	});
+}
+
+function deleteRecording(path, title) {
+	if (confirm(`Are you sure you want to delete ${title}?`)) {
+		tRemoveRecording(path).then(rv => {
+			alert(`${title} has been removed.`); 
+			doRecordings();
+		});
+	}
 }
 
 /* Callback to load the Watch section and start the selected video stream */
@@ -334,6 +356,8 @@ function bootstrap() {
 <section id="recordings"><!-- ################################################# -->
 <div>
 <h1>Recordings (<span id="trec_count"></span>)</h1>
+
+<b>Page:</b><span id="recording_pages"></span>
 <table id="Trecordings"></table>
 </div>
 </section>

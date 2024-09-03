@@ -58,7 +58,7 @@ async function tdeleteRESTData(url) {
         } else {
             return json;
         }
-    } catch (error) { console.error(error.message); }   
+    } catch (error) { console.error(error.message); } //getting error here, DELETE isn't returning anything.  
 }
 
 // API Calls - these should be exported
@@ -136,6 +136,7 @@ function tScheduleNewRecording(title, year, month, day, hour, minute, duration, 
 function tRemoveSchedule(path) {
     return tdeleteRESTData(`${tbaseurl}${path}`)
 }
+
 // get a list of the completed recordings
 function tgetRecordings() {
     return tgetRESTData(`${tbaseurl}/recordings/airings`);
@@ -145,6 +146,11 @@ function tgetRecordings() {
 function tgetWatchDetails(path) {
     return tpostRESTData(`${tbaseurl}${path}/watch`,'');
 }
+
+function tRemoveRecording(path) {
+    return tdeleteRESTData(`${tbaseurl}${path}`)
+}
+
 
 // returns the current system settings
 function tgetSettings() {
@@ -159,5 +165,5 @@ function tgetDetails(path) {
 // return the details from a list of channels, schedules, recordings, endpoints
 //  NOTE: the batch endpoint will not accept more than 50 entries
 function tbatchDetails(list) {
-    tpostRESTData(`${tbaseurl}/batch`, list);
+    return tpostRESTData(`${tbaseurl}/batch`, list);
 }
