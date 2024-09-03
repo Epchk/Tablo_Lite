@@ -74,23 +74,9 @@ async function doHome(page = 1) {
 		});
 	});
 }
-			
-
-
-
-/*
-		for (uri of channels) {
-			//Inject details for each channel
-			tgetDetails(uri).then(channel => {
-				document.getElementById("tchannels").innerHTML += `<tr id="${channel.object_id}"><td><a href="#watch" onclick="doWatch('${channel.path}');">${channel.channel.major}.${channel.channel.minor}</a></td><td>` + 
-				`${channel.channel.call_sign}</td><td>` + 
-				`${channel.channel.resolution}</td></tr>`;
-			});
-		}
-*/
 
 /* Callback to load the Schedule tab: show currently scheduled recordings */
-async function doSchedule() {
+async function doSchedule(page = 1) {
 	//inject channel list into new schedule form
 	document.getElementById('sched_channel').innerHTML='';
 	tgetChannelList().then(list => {
@@ -104,16 +90,28 @@ async function doSchedule() {
 
 	//inject the list of scheduled recordings
 	tgetScheduledRecordings().then(recordings => {	
+		const start_index = (page - 1) * 50; end_index = page * 50;
+		let pages = recordings.length;
+
 		document.getElementById('tschedule_list').innerHTML =
 		'<tr><th>ID</th><th>Name</th><th>Channel</th><th>Start</th><th>Duration</th><th>Delete?</th></tr>';
 		document.getElementById("tschedule_count").innerHTML = Object.keys(recordings).length;
 
-		for (path of recordings) {
-			//Inject details of each recording
-			tgetDetails(path).then(recording => {
-				document.getElementById('tschedule_list').innerHTML += `<tr><td>${recording.object_id}</td><td>${recording.airing_details.show_title}</td><td>${recording.airing_details.channel.channel.call_sign}</td><td>${recording.airing_details.datetime}</td><td>${recording.airing_details.duration}</td><td><a href="#schedule" onclick="deleteSchedule('${recording.program_path}');">Delete</a></td></tr>`;
-			});
+		document.getElementById('schedule_pages').innerHTML = '';
+		for (let i = 1; i <= Math.ceil(pages / 50); i++) {
+			document.getElementById('schedule_pages').innerHTML += `<a href="#home" onclick="doSchedule('${i}')">${i}</a> `;
 		}
+
+		tbatchDetails(JSON.stringify(recordings.slice(start_index, end_index))).then(list => {
+
+			let i = start_index + 1;
+			for (path in list) {
+				const recording = list[path];
+
+				//Inject details of each recording
+				document.getElementById('tschedule_list').innerHTML += `<tr><td>${recording.object_id}</td><td>${recording.airing_details.show_title}</td><td>${recording.airing_details.channel.channel.call_sign}</td><td>${recording.airing_details.datetime}</td><td>${recording.airing_details.duration}</td><td><a href="#schedule" onclick="deleteSchedule('${recording.program_path}');">Delete</a></td></tr>`;
+			}
+		});
 	});
 }
 
@@ -212,6 +210,7 @@ function StopVideo() {
 	hls.attachMedia(video);
 	hls.stopLoad();
 }
+
 /* Callback to load the Settings section. Not yet implemented. */
 function doSettings() {
 	document.getElementById("device_settings").innerHTML = '';
