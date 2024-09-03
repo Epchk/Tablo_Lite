@@ -1,5 +1,5 @@
 # Tablo_Lite
-A single page simple web UI for the Tablo OTA PVR device. The Tablo is a network attached OTA PVR produced by Nuvyyo LLC.
+A single page simple web UI for the Tablo OTA PVR device made by Nuvyyo LLC.
 
 If you are looking for the official web app for the Tablo, it's at ![http://my.tablotv.com/](http://my.tablotv.com/). Use it. it's better.
 
