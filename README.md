@@ -11,11 +11,27 @@ The need to serve them over http is due to the tablo device not having an https 
 
 ## Current Functionality
 
-- Manual setup of device IP and storing the IP Address in a cookie for future use.
-- List device information.
-- List available channels and play live show directly in the browser. Does not include guide data.
-- List recordings and play directly from the device.
+### Setup
+- Manually enter IP address of TabloTV device and store in a cookie.
+- Manually enter the URL of a guide data website and store in a cookie.
+
+### Channels
+- List basic device information.
+- List available channels.
+- Play a live channel.
+- Does NOT provide guide data.
+
+### Recordings
+- List recordings, 50 at a time.
+- Play a recording.
+- Delete recordings one at a time.
+
+### Schedule
 - List scheduled recordings.
+- Manually add a scheduled recording.
+- Delete scheduled recordings one at a time.
+
+### Settings
 - Display device settings.
 
 ### Sample home (default) screen
@@ -26,10 +42,7 @@ Tablo device information is displayed at the top with a list of the configured c
 
 ## Planned Functionality
 
-- Add manually scheduled recordings.
-- Delete scheduled recording.
-- Delete failed recordings.
-- Paginate channels, recordings, and schedule to a maximum of 50 lines per page.
+- Paginate channels, and schedule to a maximum of 50 lines per page.
 
 ### Potential Functionality
 
