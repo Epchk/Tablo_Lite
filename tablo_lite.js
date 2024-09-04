@@ -22,6 +22,7 @@ function save_tablo_ip() {
 	bootstrap();
 }
 
+
 //User Interaction
 
 /* Callback to load the Setup section. Just a placeholder. */
@@ -52,16 +53,20 @@ async function doHome(page = 1) {
 		const start_index = (page - 1) * 50; end_index = page * 50;
 		let pages = channels.length;
 
+		//Add number of channels found
 		document.getElementById("tchannel_count").innerHTML = Object.keys(channels).length;
 
+		//Add page numbers above table
 		document.getElementById('channel_pages').innerHTML = '';
 		for (let i = 1; i <= Math.ceil(pages / 50); i++) {
 			document.getElementById('channel_pages').innerHTML += `<a href="#home" onclick="doHome('${i}')">${i}</a> `;
 		}
-
+		
+		//Reset table content and add headings
 		document.getElementById("tchannels").innerHTML = "<tr><th>Channel</th><th>Name</th><th>Quality</th></tr>";
+		
+		//Load channel details in table
 		tbatchDetails(JSON.stringify(channels.slice(start_index, end_index))).then(list => {
-
 			let i = start_index + 1;
 			for (path in list) {
 				const channel = list[path];
@@ -79,13 +84,14 @@ async function doHome(page = 1) {
 async function doSchedule(page = 1) {
 	//inject channel list into new schedule form
 	document.getElementById('sched_channel').innerHTML='';
-	tgetChannelList().then(list => {
-		for (path of list) {
-			tgetDetails(path).then(channel => {
+	tgetChannelList().then(channels => {
+		tbatchDetails(JSON.stringify(channels)).then(list => {
+			for (path in list) {
+				const channel = list[path];
 				const network_name = channel.channel.network ? channel.channel.network : channel.channel.call_sign;
-				document.getElementById('sched_channel').innerHTML += `<option value="${channel.path}">${network_name} ${channel.channel.major}.${channel.channel.minor} (${channel.channel.resolution})</option>`;
-			});
-		}
+				document.getElementById('sched_channel').innerHTML += `<option value="${channel.path}">${network_name} ${channel.channel.major}.${channel.channel.minor} (${channel.channel.resolution})</option>`;	
+			}
+		});
 	});
 
 	//inject the list of scheduled recordings
@@ -93,17 +99,19 @@ async function doSchedule(page = 1) {
 		const start_index = (page - 1) * 50; end_index = page * 50;
 		let pages = recordings.length;
 
+		//reset table headings
 		document.getElementById('tschedule_list').innerHTML =
 		'<tr><th>ID</th><th>Name</th><th>Channel</th><th>Start</th><th>Duration</th><th>Delete?</th></tr>';
 		document.getElementById("tschedule_count").innerHTML = Object.keys(recordings).length;
 
+		//insert page numbers
 		document.getElementById('schedule_pages').innerHTML = '';
 		for (let i = 1; i <= Math.ceil(pages / 50); i++) {
 			document.getElementById('schedule_pages').innerHTML += `<a href="#home" onclick="doSchedule('${i}')">${i}</a> `;
 		}
 
+		//insert table details: list of scheduled recordings
 		tbatchDetails(JSON.stringify(recordings.slice(start_index, end_index))).then(list => {
-
 			let i = start_index + 1;
 			for (path in list) {
 				const recording = list[path];
