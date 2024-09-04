@@ -1,5 +1,5 @@
 # Tablo_Lite
-A single page simple web UI for the Tablo OTA PVR device. The Tablo is a network attached OTA PVR produced by Nuvyyo LLC.
+A single page simple web UI for the Tablo OTA PVR device made by Nuvyyo LLC.
 
 If you are looking for the official web app for the Tablo, it's at ![http://my.tablotv.com/](http://my.tablotv.com/). Use it. it's better.
 
@@ -24,7 +24,7 @@ To run it, load the index.html in a web browser running on a computer that is on
 
 ### Channels
 - List basic device information.
-- List available channels.
+- List available channels, 50 at a time.
 - Play a live channel.
 - Does NOT provide guide data.
 
@@ -34,7 +34,7 @@ To run it, load the index.html in a web browser running on a computer that is on
 - Delete recordings one at a time.
 
 ### Schedule
-- List scheduled recordings.
+- List scheduled recordings, 50 at a time.
 - Manually add a scheduled recording.
 - Delete scheduled recordings one at a time.
 
@@ -48,8 +48,6 @@ To run it, load the index.html in a web browser running on a computer that is on
 Tablo device information is displayed at the top with a list of the configured channels below. Selecting a channel switches to the watch interface and starts playing the live TV channel from the Tablo device.
 
 ## Planned Functionality
-
-- Paginate channels, and schedule to a maximum of 50 lines per page.
 
 ### Potential Functionality
 
