@@ -86,9 +86,9 @@ function tgetScheduledRecordings() {
 }
 
 // post a new schedule to record
-function tpostSchedule(data) {
-    return tpostRESTData(`${baseurl}/guide/programs/`, data);
-}
+//function tpostSchedule(data) {
+//    return tpostRESTData(`${baseurl}/guide/programs/`, data);
+//}
 
 // manually schedule a new recording. timezone is taken from the local computre, month is a number. hour uses 24 hour clock.
 /*
@@ -119,8 +119,8 @@ function tScheduleNewRecording(title, year, month, day, hour, minute, duration, 
             "duration":3600,
             "kind":"once",
             "once":{"year":2038,"month":1,"day":19,"hour":3,"minute":14,"timezone":"America/Toronto"}
-        }
-    };
+        },"program":{"title":"test"},"show_counts":{"airing_count":1,"conflicted_count":0,"scheduled_count":1},"keep":{"rule":"none","count":null},"recordings_path":null};
+
     data.config.once.timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
     data.config.title=title;
     data.config.once.year=parseInt(year);
@@ -130,7 +130,8 @@ function tScheduleNewRecording(title, year, month, day, hour, minute, duration, 
     data.config.once.minute=parseInt(minute);
     data.config.duration=duration*60;
     data.config.channel_path=channel_path;
-    return tpostSchedule(JSON.stringify(data));
+    data.program.title=title;
+    return tpostRESTData(`${tbaseurl}/guide/programs`, JSON.stringify(data));
 }
 
 function tRemoveSchedule(path) {
