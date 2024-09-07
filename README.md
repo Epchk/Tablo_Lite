@@ -22,6 +22,10 @@ To run it, load the index.html in a web browser running on a computer that is on
 - Manually enter IP address of TabloTV device and store in a cookie.
 - Manually enter the URL of a guide data website and store in a cookie.
 
+#### Limitations
+
+The Tablo devices with HDMI out support do not encode video in a format that is supported by the video player.
+
 ### Channels
 - List basic device information.
 - List available channels, 50 at a time.
