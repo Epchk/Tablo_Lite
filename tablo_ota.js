@@ -65,6 +65,11 @@ async function tdeleteRESTData(url) {
 //  All API calls return a promise for a JSON structure
 //  if an error is encountered check the error log for details
 
+function tgetAccount() {
+    alert('Account');
+    return tgetRESTData(`${tbaseurl}/account/subscription`);
+}
+
 // returns a json list of paths for each channel configured on the Tablo device
 function tgetChannelList() {
     return tgetRESTData(`${tbaseurl}/guide/channels`);

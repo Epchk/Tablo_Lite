@@ -27,11 +27,13 @@ function save_tablo_ip() {
 
 /* Callback to load the Setup section. Just a placeholder. */
 function doSetup() {
+	StopVideo(); // stop video playing, if it was playing
 
 }
 
 /* Callback to load the Home tab: device info, hd info, channel list */
 async function doHome(page = 1) {
+	StopVideo(); // stop video playing, if it was playing
   	//Inject the server info into the Home section
 	tgetServerInfo().then(server => {
 		document.getElementById("Tserver_name").innerHTML = `${server.name} (${server.local_address})`;
@@ -82,6 +84,7 @@ async function doHome(page = 1) {
 
 /* Callback to load the Schedule tab: show currently scheduled recordings */
 async function doSchedule(page = 1) {
+	StopVideo(); // stop video playing, if it was playing
 	//inject channel list into new schedule form
 	document.getElementById('sched_channel').innerHTML='';
 	tgetChannelList().then(channels => {
@@ -148,6 +151,7 @@ function deleteSchedule(path) {
 
 //* Callback to load the Recordings section and list all airings */
 async function doRecordings(page = 1) {
+	StopVideo(); // stop video playing, if it was playing
 	//Inject list of completed recordings
 	tgetRecordings().then(recordings => {
 		const start_index = (page - 1) * 50; end_index = page * 50;
@@ -190,7 +194,8 @@ function deleteRecording(path, title) {
 }
 
 /* Callback to load the Watch section and start the selected video stream */
-async function doWatch(path) {
+function doWatch(path) {
+	StopVideo(); // stop video playing, if it was playing
 	tgetWatchDetails(path).then(stream => {
 		document.getElementById('playlist_url').innerHTML = `The playlist URL is "${stream.playlist_url}".`;
 
@@ -221,6 +226,7 @@ function StopVideo() {
 
 /* Callback to load the Settings section. Not yet implemented. */
 function doSettings() {
+	StopVideo(); // stop video playing, if it was playing
 	document.getElementById("device_settings").innerHTML = '';
 	tgetSettings().then(setting => {
 		tgetDetails(setting.recording_quality).then(quality => {
@@ -238,6 +244,16 @@ function doSettings() {
 			`<tr><th>data collection</th><td>${setting.data_collection}</td></tr>\n` +
 			`<tr><th>preferred audio track</th><td>${setting.preferred_audio_track}</td></tr>\n`;
 	});
+
+	//Subscription details
+	tgetAccount().then(account => {
+		document.getElementById("subscriptions").innerHTML = '<tr><th>Name</th><th>Status</th><th>Description</th></tr>';
+
+		for (const subscription of account.subscriptions) {
+			document.getElementById("subscriptions").innerHTML += `<tr><td>${subscription.title}</td>` +
+				`<td>${subscription.status}</td><td>${subscription.description}</td></tr>`;
+		}
+	})
 }
 
 //BOOSTRAP
