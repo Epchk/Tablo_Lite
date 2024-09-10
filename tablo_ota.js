@@ -66,7 +66,6 @@ async function tdeleteRESTData(url) {
 //  if an error is encountered check the error log for details
 
 function tgetAccount() {
-    alert('Account');
     return tgetRESTData(`${tbaseurl}/account/subscription`);
 }
 
