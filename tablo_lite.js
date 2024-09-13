@@ -65,7 +65,7 @@ async function doHome(page = 1) {
 		}
 		
 		//Reset table content and add headings
-		document.getElementById("tchannels").innerHTML = "<tr><th>Channel</th><th>Name</th><th>Quality</th></tr>";
+		document.getElementById("tchannels").innerHTML = "<tr><th>Channel</th><th>Network</th><th>Call Sign</th><th>Quality</th></tr>";
 		
 		//Load channel details in table
 		tbatchDetails(JSON.stringify(channels.slice(start_index, end_index))).then(list => {
@@ -75,6 +75,7 @@ async function doHome(page = 1) {
 
 				document.getElementById("tchannels").innerHTML += `<tr id="${channel.object_id}"><td>` + 
 				`<a href="#watch" onclick="doWatch('${channel.path}');">${channel.channel.major}.${channel.channel.minor}</a></td><td>` + 
+				`${channel.channel.network}</td><td>` + 
 				`${channel.channel.call_sign}</td><td>` + 
 				`${channel.channel.resolution}</td></tr>`;
 			}
