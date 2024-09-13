@@ -79,6 +79,11 @@ function tgetServerInfo() {
     return tgetRESTData(`${tbaseurl}/server/info`);
 }
 
+// get current status of turner (and number of tuners)
+function tgetTunerInfo() {
+    return tgetRESTData(`${tbaseurl}/server/tuners`);
+}
+
 // get data about the attached harddrives
 function tgetHarddrive() {
     return tgetRESTData(`${tbaseurl}/server/harddrives`);

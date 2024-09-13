@@ -80,6 +80,17 @@ async function doHome(page = 1) {
 				`${channel.channel.resolution}</td></tr>`;
 			}
 		});
+
+		// Tuner Status
+		tgetTunerInfo().then(list => {
+			document.getElementById("tuner_info").innerHTML = '<th>Tuners</th>';
+			for (i in list) {
+				tuner = list[i];
+				in_use = tuner.in_use ? 'In Use' : 'available';
+				recording = tuner.recording ? 'recording' : '';
+				document.getElementById("tuner_info").innerHTML += `<td>(${i}): ${in_use} ${recording}</td>`
+			}
+		});
 	});
 }
 
