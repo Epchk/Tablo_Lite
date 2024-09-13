@@ -1,0 +1,63 @@
+<html><head>
+<style>
+html, body {
+	/* set the display area to the full widnow */
+	margin: 0;
+	padding: 0;
+	height: 100%;
+	width: 100%;
+}
+
+
+nav {
+	/* keep it on the left full length of the screen */
+	position: fixed;
+	top: 0;
+	box-sizing:border-box;	/* make the height & width include the padding and border */
+	width: 100px;
+	height: 100%;
+	z-index: 3;	/* put it on top of anything with a lower z-index */
+	
+	padding: 5px;
+	background-color: blue;
+}
+
+section {
+	display: block;
+	box-sizing:border-box;
+	min-height: 100%;
+	min-width: 100%;
+	padding: 0.1em 20px 0.1em 120px;
+	z-index: 1;
+	position: absolute;
+	top: 0;
+	opacity: 0;
+}
+section:target {
+	z-index: 2;
+	opacity: 1;
+}
+
+</style>
+</head><body>
+<nav>
+<a href="#Home">Home</a><br>
+<a href="#Settings">Settings</a><br>
+<a href="#About">About</a><br>
+</nav>
+<section id="Home"><h1>Home</h1>
+<p>This section contains the default home screen.<p>
+</section>
+<section id="Settings"><h1>Settings</h1>
+<p>This section contains the settings for the application.</p>
+<table><tr><th>One</th><th>One</th><th>One</th><th>One</th><th>One</th><th>One</th><th>One</th><th>One</th><th>One</th><th>One</th><th>One</th><th>One</th><th>One</th><th>One</th><th>One</th><th>One</th><th>One</th><th>One</th><th>One</th><th>One</th><th>One</th><th>One</th><th>One</th><th>One</th><th>One</th><th>One</th><th>One</th><th>One</th><th>One</th><th>One</th><th>One</th><th>One</th><th>One</th><th>One</th><th>One</th><th>One</th><th>One</th><th>One</th><th>One</th><th>One</th><th>One</th><th>One</th><th>One</th><th>One</th><th>One</th></tr>
+<tr><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td></tr>
+</table>
+</section>
+<section id="About"><h1>About</h1>
+<p>This section tells you about the application.</p>
+<h2>whatever</h2>
+<p>blah</p>
+<p>blah</p><p>blah</p><p>blah</p><p>blah</p><p>blah</p><p>blah</p><p>blah</p><p>blah</p><p>blah</p><p>blah</p><p>blah</p><p>blah</p><p>blah</p><p>blah</p><p>blah</p><p>blah</p><p>blah</p><p>blah</p>
+</section>
+</body>

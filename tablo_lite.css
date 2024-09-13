@@ -1,6 +1,14 @@
-html {
+html, body {
+    margin: 0;
+	padding: 0;
+	height: 100%;
+	width: 100%;
+
 	font-family: Helvetica;
 }
+
+
+
 th {
 	background: #04E;
 	color: #fff;
@@ -13,8 +21,21 @@ td {
 	padding: 0rem 1rem 0rem 1rem;
 }
 
+/* 
 .container {
   min-height: 100vh;
+}
+*/
+
+nav {
+    position: fixed;
+    left: 0;
+    z-index: 50;
+    display: flex; 
+    justify-content: space-around;
+    flex-direction: column; 
+    height: 100%;
+    background: #027;
 }
 
 nav a {
@@ -25,39 +46,32 @@ nav a {
     text-align: center;
 }
 
-nav {
-    position: fixed;
-    left: 0;
-    z-index: 50;
-    display: flex;
-    justify-content: space-around;
-    flex-direction: column;
-    height: 100vh;
-    background: #027;
-}
-
 section {
-    position: absolute;
-    top: 0;
-    height: 100vh;
-    width: 0;
-    opacity: 0;
-    display: flex;
+	display: block;
+	box-sizing:border-box;
+    height: 0;
+	min-width: 100%;
+	padding: 0.1em 20px 0.1em 100px;
+	z-index: 1;
+	position: absolute;
+	top: 0;
+	opacity: 0;
 
 } 
 
 /* Styles applied on trigger */
 section:target {
-    opacity: 1;
-    position: absolute;
-    width: 100%;
-    height: 95%;
-    z-index: 10;
+    min-width: 100%;
+    min-height: 100%;
+    z-index: 2;
+	opacity: 1;
 }
 
+/*
 section:target > div {
-	padding-left: 100px; /* there has got to be a better way to keep the sidebar and section from overlapping. */
+	padding-left: 80px; 
 }
+*/
 
 .page_numbers {
     padding: 3px;
