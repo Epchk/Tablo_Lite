@@ -58,4 +58,4 @@ Tablo device information is displayed at the top with a list of the configured c
 These may not be possible with 3rd party apps like this one.
 
 - Update settings on the tablo device.
-- Rescan/update the available OTA channels.
+- Rescan/update the available OTA channels. _this does not appear to be possible without using the authenticated API_
