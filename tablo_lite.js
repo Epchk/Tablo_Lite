@@ -273,7 +273,8 @@ function bootstrap() {
 	let tablo_ip_addr = getCookie('tablo_ip_addr');
 	const tv_listings_url = getCookie('tv_listings_url');
 	if (tv_listings_url) {
-		document.getElementById("tv_listings_url").href = tv_listings_url;
+		document.getElementById("tv_listings_link").href = tv_listings_url;
+		document.getElementById("tv_listings_url").value = tv_listings_url;
 	}
 	
 	if (tablo_ip_addr) {
