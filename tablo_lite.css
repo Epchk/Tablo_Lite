@@ -7,8 +7,6 @@ html, body {
 	font-family: Helvetica;
 }
 
-
-
 th {
 	background: #04E;
 	color: #fff;
@@ -21,11 +19,6 @@ td {
 	padding: 0rem 1rem 0rem 1rem;
 }
 
-/* 
-.container {
-  min-height: 100vh;
-}
-*/
 
 nav {
     position: fixed;
@@ -66,12 +59,6 @@ section:target {
     z-index: 2;
 	opacity: 1;
 }
-
-/*
-section:target > div {
-	padding-left: 80px; 
-}
-*/
 
 .page_numbers {
     padding: 3px;
