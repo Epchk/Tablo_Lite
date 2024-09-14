@@ -110,11 +110,6 @@ function tgetScheduledRecordings() {
     return tgetRESTData(`${tbaseurl}/guide/airings`);
 }
 
-// post a new schedule to record
-//function tpostSchedule(data) {
-//    return tpostRESTData(`${baseurl}/guide/programs/`, data);
-//}
-
 // manually schedule a new recording. timezone is taken from the local computre, month is a number. hour uses 24 hour clock.
 /*
 {
