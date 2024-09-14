@@ -178,7 +178,7 @@ function tgetSettings() {
     return tgetRESTData(`${tbaseurl}/settings/info`);
 }
 
-// return details from a Channel, Schedule, Recording endpoint, Quality
+// return details from a Channel, Schedule, Recording, Quality, etc. endpoint
 function tgetDetails(path) {
     return tgetRESTData(`${tbaseurl}${path}`);
 }
