@@ -9,7 +9,7 @@ async function tgetRESTData(url) {
         const response = await fetch(url);
         if (!response.ok) {
             const error_text = await response.json();
-            alert(error_text.description);
+            alert(error_text.error.description);
             throw new Error(`Response status: ${response.status} (${url})`); 
         }
   
@@ -28,7 +28,7 @@ async function tpostRESTData(url, data) {
         const response = await fetch(url, {method: "POST", body: data});
         if (!response.ok) {
             const error_text = await response.json();
-            alert(error_text.description);
+            alert(error_text.error.description);
             throw new Error(`Response status: ${response.status} (${url})`); 
         }
   
@@ -46,7 +46,7 @@ async function tpatchRESTData(url, data) {
         const response = await fetch(url, {method: "PATCH", body: data});
         if (!response.ok) {
             const error_text = await response.json();
-            alert(error_text.description);
+            alert(error_text.error.description);
             throw new Error(`Response status: ${response.status} (${url})`); 
         }
   
@@ -64,7 +64,7 @@ async function tdeleteRESTData(url) {
         const response = await fetch(url, {method: "DELETE"});
         if (!response.ok) {
             const error_text = await response.json();
-            alert(error_text.description);
+            alert(error_text.error.description);
             throw new Error(`Response status: ${response.status} (${url})`); 
         }
   
