@@ -125,8 +125,23 @@ Tablo API Reference: https://jessedp.github.io/tablo-api-docs/#tablo-api-introdu
 <code>ffmpeg -i "stream_url" -c copy -bsf:a aac_adtstoasc "filename.mp4"</code>
 
 <ul>
-	<li><i>stream_url</i> is the url of the stream that is displayed at the top when playing a recording.</li>
-	<li><i>filename</i> is the name of the file to save the recording.</li>
+	<li><i>stream_url</i>: is the url of the stream that is displayed at the top when playing a recording.</li>
+	<li><i>filename</i>: is the name of the file to save the recording.</li>
 </ul>
+
+<p>The following will trancode the video to use h264 video encoding and aac audio encoding as it saves the file. This may be useful for newer tablotv devices that don't store the video as h264 already.</p>
+
+<code>ffmpeg -hide_banner -v error -stats -i "stream_url" -c:v h264 -c:a aac -bsf:a aac_adtstoasc "filename.mp4"</code>
+
+<ul>
+	<li><i>-hide_banner</i>: surpresses a very long message at the start of ffmpeg.</li>
+	<li><i>-v error</i>: sets the level of information ffmpeg prints about what it's doing. Try -v info for more.</li>
+	<li><i>-stats</i>: provides a progress indicator.</li>
+	<li><i>-c:v h264</i>: selects the video encoding.</li>
+	<li><i>-c:a aac</i>: selects the audio encoding. If your tablo supports surround sound, use ac3 instead.</li>
+	<li><i>-bsf:a aac_adtstoasc</i>: makes a change to how aac is stored so that the video will play sooner when streamed. Remove this if you use ac3 audio encoding.</li>
+	<li><i>filename.mp4</i>: is the name of the file to save the video to. You can change the extention to change the container time. for example, use <i>.mkv</i> if you prefer.</li>
+</ul>
+
 </section>
 </body></html>

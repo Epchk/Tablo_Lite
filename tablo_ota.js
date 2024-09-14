@@ -7,14 +7,18 @@ const tbaseurl = `http://${tablo_ipv4_addr}:8885`;
 async function tgetRESTData(url) {
     try {
         const response = await fetch(url);
-        if (!response.ok) {throw new Error(`Response status: ${response.status} (${url})`); }
+        if (!response.ok) {
+            const error_text = await response.json();
+            alert(error_text.description);
+            throw new Error(`Response status: ${response.status} (${url})`); 
+        }
   
         const json = await response.json();
         if (json.error) {
-            throw new Error(`REST Error: ${json.error.description} (${url})`);
-        } else {
-            return json;
+            throw new Error(`REST Error: ${json.status} (${url})`);
         }
+        return json;
+
     } catch (error) { console.error(error.message); }
 }
 
@@ -22,42 +26,54 @@ async function tpostRESTData(url, data) {
     console.log(data);
     try {
         const response = await fetch(url, {method: "POST", body: data});
-        if (!response.ok) {throw new Error(`Response status: ${response.status} (${url})`); }
+        if (!response.ok) {
+            const error_text = await response.json();
+            alert(error_text.description);
+            throw new Error(`Response status: ${response.status} (${url})`); 
+        }
   
         const json = await response.json();
         if (json.error) {
-            throw new Error(`REST Error: ${json.error.description} (${url})`);
-        } else {
-            return json;
+            throw new Error(`REST Error: ${json.status} (${url})`);
         }
+        return json;
+
     } catch (error) { console.error(error.message); }
 }
 
 async function tpatchRESTData(url, data) {
     try {
         const response = await fetch(url, {method: "PATCH", body: data});
-        if (!response.ok) {throw new Error(`Response status: ${response.status} (${url})`); }
+        if (!response.ok) {
+            const error_text = await response.json();
+            alert(error_text.description);
+            throw new Error(`Response status: ${response.status} (${url})`); 
+        }
   
         const json = await response.json();
         if (json.error) {
-            throw new Error(`REST Error: ${json.error.description} (${url})`);
-        } else {
-            return json;
+            throw new Error(`REST Error: ${json.status} (${url})`);
         }
+        return json;
+
     } catch (error) { console.error(error.message); }
 }
 
 async function tdeleteRESTData(url) {
     try {
         const response = await fetch(url, {method: "DELETE"});
-        if (!response.ok) {throw new Error(`Response status: ${response.status} (${url})`); }
+        if (!response.ok) {
+            const error_text = await response.json();
+            alert(error_text.description);
+            throw new Error(`Response status: ${response.status} (${url})`); 
+        }
   
         const json = await response.json();
         if (json.error) {
-            throw new Error(`REST Error: ${json.error.description} (${url})`);
-        } else {
-            return json;
+            throw new Error(`REST Error: ${json.status} (${url})`);
         }
+            return json;
+
     } catch (error) { console.error(error.message); } //getting error here, DELETE isn't returning anything.  
 }
 

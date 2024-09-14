@@ -83,7 +83,7 @@ async function doHome(page = 1) {
 
 		// Tuner Status
 		tgetTunerInfo().then(list => {
-			document.getElementById("tuner_info").innerHTML = '<th>Tuners</th>';
+			document.getElementById("tuner_info").innerHTML = '<th>Tuners:</th>';
 			for (i in list) {
 				tuner = list[i];
 				in_use = tuner.in_use ? 'In Use' : 'available';
