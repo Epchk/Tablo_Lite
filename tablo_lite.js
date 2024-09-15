@@ -270,7 +270,7 @@ function doSettings() {
 
 //BOOSTRAP
 function bootstrap() {
-	const tablo_ip_addr = getCookie('tablo_ip_addr')
+	const tablo_ip_addr = getCookie('tablo_ip_addr');
 		
 	const tv_listings_url = getCookie('tv_listings_url');
 	if (tv_listings_url) {

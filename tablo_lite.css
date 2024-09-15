@@ -67,6 +67,6 @@ section:target {
 
 /* Change the width and height values if you want the video player to be a different size. */
 video {
-	height: 720px;
-	width: 1280px;
+	width: 100%;
+    height: auto;
 }
