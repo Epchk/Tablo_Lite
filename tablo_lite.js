@@ -210,6 +210,17 @@ function doWatch(path) {
 	StopVideo(); // stop video playing, if it was playing
 	tgetWatchDetails(path).then(stream => {
 		document.getElementById('playlist_url').innerHTML = `The playlist URL is "${stream.playlist_url}".`;
+		tgetDetails(path).then(stream => {
+			if (stream.airing_details) {
+				document.getElementById('watch_details').innerHTML = `${stream.airing_details.show_title}`;
+			} else if (stream.channel) {
+				const channel_name = stream.channel.network ? stream.channel.network : stream.channel.call_sign;
+				document.getElementById('watch_details').innerHTML = `${channel_name}`;
+			} else {
+				document.getElementById('watch_details').innerHTML = '';
+			}
+		});
+		
 
 		/* EXPERIMENTAL use HLS to play video directly from Tablo */
 		var video = document.getElementById('video');
