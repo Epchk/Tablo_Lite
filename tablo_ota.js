@@ -1,6 +1,5 @@
-var tablo_ipv4_addr = "192.168.89.120";
-
-const tbaseurl = `http://${tablo_ipv4_addr}:8885`;
+var tablo_ipv4_addr = "192.168.1.12";
+var tbaseurl = `http://${tablo_ipv4_addr}:8885`;
 
 // Support Functions - these should be private
 
@@ -80,6 +79,11 @@ async function tdeleteRESTData(url) {
 // API Calls - these should be exported
 //  All API calls return a promise for a JSON structure
 //  if an error is encountered check the error log for details
+
+function setTabloIP(ip_addr) {
+    tablo_ipv4_addr = ip_addr;
+    tbaseurl = `http://${tablo_ipv4_addr}:8885`;
+}
 
 function tgetAccount() {
     return tgetRESTData(`${tbaseurl}/account/subscription`);

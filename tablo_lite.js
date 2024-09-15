@@ -270,7 +270,8 @@ function doSettings() {
 
 //BOOSTRAP
 function bootstrap() {
-	let tablo_ip_addr = getCookie('tablo_ip_addr');
+	const tablo_ip_addr = getCookie('tablo_ip_addr')
+		
 	const tv_listings_url = getCookie('tv_listings_url');
 	if (tv_listings_url) {
 		document.getElementById("tv_listings_link").href = tv_listings_url;
@@ -279,6 +280,7 @@ function bootstrap() {
 	
 	if (tablo_ip_addr) {
 		document.getElementById("tablo_ip_entry").value = tablo_ip_addr;
+		setTabloIP(tablo_ip_addr);
 		doHome();
 		location.href = location.href.replace(/#.*$/,'') + "#home";
 	} else {
