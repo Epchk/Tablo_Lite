@@ -24,7 +24,7 @@ To run it, load the index.html in a web browser running on a computer that is on
 
 #### Limitations
 
-The Tablo devices with HDMI out support do not encode video in a format that is supported by the video player in most web browser.
+Some Tablo devices do not encode video in a format that is supported by the video player in most web browser. Older tablo devices encoded in h.264, which is supported.
 
 ### Channels
 - List basic device information.
