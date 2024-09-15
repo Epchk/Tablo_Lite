@@ -1,7 +1,7 @@
 # Tablo_Lite
 A single page simple web UI for the Tablo OTA PVR device made by Nuvyyo LLC.
 
-If you are looking for the official web app for the Tablo, it's at ![http://my.tablotv.com/](http://my.tablotv.com/). Use it. it's better.
+If you are looking for the official web app for the Tablo, it's at ![http://my.tablotv.com/](http://my.tablotv.com/). Use it. It's better.
 
 ## Installation
 
@@ -24,7 +24,7 @@ To run it, load the index.html in a web browser running on a computer that is on
 
 #### Limitations
 
-The Tablo devices with HDMI out support do not encode video in a format that is supported by the video player.
+The Tablo devices with HDMI out support do not encode video in a format that is supported by the video player in most web browser.
 
 ### Channels
 - List basic device information.
@@ -53,9 +53,13 @@ Tablo device information is displayed at the top with a list of the configured c
 
 ## Planned Functionality
 
+The following will probably not be included in the 1.0 release
+- Select recording and live tv quality
+- Select preferred audio track
+
 ### Potential Functionality
 
 These may not be possible with 3rd party apps like this one.
 
-- Update settings on the tablo device.
-- Rescan/update the available OTA channels. _this does not appear to be possible without using the authenticated API_
+- Update additional settings on the tablo device (name, LED status, Zip/Postal Code).
+- Rescan/update the available OTA channels. _This does not appear to be possible without using the authenticated API_
