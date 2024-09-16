@@ -215,7 +215,7 @@ function doWatch(path) {
 				document.getElementById('watch_details').innerHTML = `${stream.airing_details.show_title}`;
 			} else if (stream.channel) {
 				const channel_name = stream.channel.network ? stream.channel.network : stream.channel.call_sign;
-				document.getElementById('watch_details').innerHTML = `${stream.channel.major}.${stream.channle.minor} - ${channel_name}`;
+				document.getElementById('watch_details').innerHTML = `${stream.channel.major}.${stream.channel.minor} - ${channel_name}`;
 			} else {
 				document.getElementById('watch_details').innerHTML = '';
 			}
