@@ -282,7 +282,7 @@ function doSettings() {
 function bootstrap() {
 	const tablo_ip_addr = getCookie('tablo_ip_addr');	
 	const tv_listings_url = getCookie('tv_listings_url');
-	const listings_url = RegExp("^http(s)?:\/\/[a-zA-Z0-9;,\/\?:@&=+$_!~*'.-]+$").test(tv_listings_url) ? tv_listings_url : '#Setup';
+	const listings_url = RegExp("^http(s)?:\/\/[a-zA-Z0-9;,\/?:@&=+$_!~*'.-]+$").test(tv_listings_url) ? tv_listings_url : '#Setup';
 	if (listings_url) {
 		document.getElementById("tv_listings_link").href = listings_url;
 		document.getElementById("tv_listings_url").value = listings_url;
