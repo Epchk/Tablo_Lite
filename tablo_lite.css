@@ -7,6 +7,9 @@ html, body {
 	font-family: Helvetica;
 }
 
+table {
+    width: 100%;
+}
 th {
 	background: #04E;
 	color: #fff;
@@ -17,6 +20,7 @@ table.byrow th {
 }
 td {
 	padding: 0.125rem 1rem 0.125rem 1rem;
+    background: lightgray;
 }
 
 
