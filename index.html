@@ -139,10 +139,5 @@
 	<li><i>-bsf:a aac_adtstoasc</i>: makes a change to how aac is stored so that the video will play sooner when streamed. Remove this if you use ac3 audio encoding.</li>
 	<li><i>filename.mp4</i>: is the name of the file to save the video to. You can change the extention to change the container type. For example, use <i>.mkv</i> if you prefer.</li>
 </ul>
-
-<p>The following MIGHT be useful to the adventurous. It should create a single use stream that transcodes the content from the tablotv to a format usable by an embeded video player.</p>
-
-<code>ffmpeg -hide_banner -v error -stats -i _watch_path_ -c:v h264 -crf 28 -preset veryfast -c:a aac -listen 1 -f mpegts http://_script_server_ip_:tcp_port</code>
-
 </section>
 </body></html>
