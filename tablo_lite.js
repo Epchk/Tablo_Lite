@@ -82,12 +82,12 @@ async function doHome(page = 1) {
 
 		// Tuner Status
 		tgetTunerInfo().then(list => {
-			document.getElementById("tuner_info").innerHTML = '<th>Tuners:</th>';
+			document.getElementById("tuner_info").innerHTML = '';
 			for (i in list) {
 				tuner = list[i];
 				in_use = tuner.in_use ? 'In Use' : 'available';
 				recording = tuner.recording ? 'recording' : '';
-				document.getElementById("tuner_info").innerHTML += `<td>(${i}): ${in_use} ${recording}</td>`
+				document.getElementById("tuner_info").innerHTML += `(${i}): ${in_use} ${recording}&nbsp;&nbsp;`
 			}
 		});
 	});
