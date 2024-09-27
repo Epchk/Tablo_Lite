@@ -132,7 +132,6 @@ async function doSchedule(page = 1) {
 			
 				const local_datetime = new Date(`${recording.airing_details.datetime}`).toLocaleString('en-CA', {timeZone: "America/Toronto"}); //EDIT to use system timezone
 			
-				alert(recording.airing_details.datetime + " -> " + local_datetime);
 				//Inject details of each recording
 				document.getElementById('tschedule_list').innerHTML += `<tr><td>${recording.object_id}</td>` +
 					`<td>${recording.airing_details.show_title}</td>` + 
