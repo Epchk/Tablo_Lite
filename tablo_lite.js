@@ -129,9 +129,16 @@ async function doSchedule(page = 1) {
 			let i = start_index + 1;
 			for (path in list) {
 				const recording = list[path];
-
+			
+				const local_datetime = new Date(`${recording.airing_details.datetime}`).toLocaleString('en-CA', {timeZone: "America/Toronto"}); //EDIT to use system timezone
+			
+				alert(recording.airing_details.datetime + " -> " + local_datetime);
 				//Inject details of each recording
-				document.getElementById('tschedule_list').innerHTML += `<tr><td>${recording.object_id}</td><td>${recording.airing_details.show_title}</td><td>${recording.airing_details.channel.channel.call_sign}</td><td>${recording.airing_details.datetime}</td><td>${recording.airing_details.duration}</td><td><a href="#schedule" onclick="deleteSchedule('${recording.program_path}');">Delete</a></td></tr>`;
+				document.getElementById('tschedule_list').innerHTML += `<tr><td>${recording.object_id}</td>` +
+					`<td>${recording.airing_details.show_title}</td>` + 
+					`<td>${recording.airing_details.channel.channel.call_sign}</td>` + 
+					`<td>${local_datetime}</td>` +
+					`<td>${recording.airing_details.duration}</td><td><a href="#schedule" onclick="deleteSchedule('${recording.program_path}');">Delete</a></td></tr>`;
 			}
 		});
 	});
@@ -181,13 +188,14 @@ async function doRecordings(page = 1) {
 			let i = start_index + 1;
 			for (path in list) {
 				const recording = list[path];
+				const local_datetime = new Date(`${recording.airing_details.datetime}`).toLocaleString('en-CA', {timeZone: "America/Toronto"}); //FIXME: use system timezone
 				document.getElementById('Trecordings').innerHTML += `<tr><td>${i} - ${recording.object_id}</td><td>` +
 					`<a href="#watch" onClick="doWatch('${recording.path}');">${recording.airing_details.show_title}</a></td><td>` + 
 					Math.round(recording.video_details.duration/60) + "m </td><td>" +
 					`${recording.video_details.clean}</td><td>` +
 					`${recording.video_details.height}</td><td>` +
 					`${recording.airing_details.channel.channel.call_sign}</td><td>` + 
-					`${recording.airing_details.datetime}</td><td>` +
+					`${local_datetime}</td><td>` +
 					`<a href=#recordings onclick="deleteRecording('${recording.path}', '${recording.airing_details.show_title}')">Delete</a></tr>\n`;
 					i++;
 			}
