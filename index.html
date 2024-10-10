@@ -28,11 +28,20 @@
 <table>
 	<tr><th>Tablo IP Address:</th><td><input id="tablo_ip_entry" type="text" required pattern="((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)(\.|$)){4}" title="Enter a valid IPv4 Address"/> <i>i.e. 10.10.10.2</i></td></tr>
 	<tr><th>Listings Provider URL:</th><td><input id="tv_listings_url" type="text" pattern="(https:\/\/|http:\/\/)?[a-zA-Z0-9]{2,}(\.[a-zA-Z0-9]{2,})(\.[a-zA-Z0-9]{2,})?\/([a-zA-Z0-9\.\/\-]*)" title="Leave blank or provide a valid URL"/> <i>will be displayed beside the channel listing</i></td></tr>
+	<tr><th>Downloader URL:</th><td><input id="downloader_url" type="text" pattern="(https:\/\/|http:\/\/)?[a-zA-Z0-9]{2,}(\.[a-zA-Z0-9]{2,})(\.[a-zA-Z0-9]{2,})?\/([a-zA-Z0-9\.\/\-]*)" title="Leave blank or provide a valid URL"/> <i>this url will be called with the expectation it will download a video from the tablo.</i></td></tr>
 </table>
 <input type="submit" value="Save" onclick="save_tablo_ip();">
 </form>
 <br>
 <p>These values will be saved in cookies in your web browser. If you remove the cookies, you will need to re-enter.</p>
+<h2>Downloader URL</h2>
+<p>The Downloader URL is used with the "download" link in the Recordings Section. You are responsible for creating your own interface to a downloader script.</p>
+<p>The Downloader URL will be called with a query string containing the following parameters:</p>
+<ul>
+	<li>v=<i>full_url_to_video</i> -- this is the same url used to watch a recording.</li>
+	<li>t=<i>video_title</i> -- this is the same name that appears in the name column in the Recordings Section.</li>
+</ul>
+<p>If the Downloader URL is left blank, there will be no download link displayed.</p>
 </section>
 
 <section id="home"><!-- ################################################# -->
