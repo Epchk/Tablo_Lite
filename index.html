@@ -28,21 +28,30 @@
 <table>
 	<tr><th>Tablo IP Address:</th><td><input id="tablo_ip_entry" type="text" required pattern="((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)(\.|$)){4}" title="Enter a valid IPv4 Address"/> <i>i.e. 10.10.10.2</i></td></tr>
 	<tr><th>Listings Provider URL:</th><td><input id="tv_listings_url" type="text" pattern="(https:\/\/|http:\/\/)?[a-zA-Z0-9]{2,}(\.[a-zA-Z0-9]{2,})(\.[a-zA-Z0-9]{2,})?\/([a-zA-Z0-9\.\/\-]*)" title="Leave blank or provide a valid URL"/> <i>will be displayed beside the channel listing</i></td></tr>
+	<tr><th>Downloader URL:</th><td><input id="downloader_url" type="text" pattern="(https:\/\/|http:\/\/)?[a-zA-Z0-9]{2,}(\.[a-zA-Z0-9]{2,})(\.[a-zA-Z0-9]{2,})?\/([a-zA-Z0-9\.\/\-]*)" title="Leave blank or provide a valid URL"/> <i>this url will be called with the expectation it will download a video from the tablo.</i></td></tr>
 </table>
 <input type="submit" value="Save" onclick="save_tablo_ip();">
 </form>
 <br>
 <p>These values will be saved in cookies in your web browser. If you remove the cookies, you will need to re-enter.</p>
+<h2>Downloader URL</h2>
+<p>The Downloader URL is used with the "download" link in the Recordings Section. You are responsible for creating your own interface to a downloader script.</p>
+<p>The Downloader URL will be called with a query string containing the following parameters:</p>
+<ul>
+	<li>v=<i>full_url_to_video</i> -- this is the same url used to watch a recording.</li>
+	<li>t=<i>video_title</i> -- this is the same name that appears in the name column in the Recordings Section.</li>
+</ul>
+<p>If the Downloader URL is left blank, there will be no download link displayed.</p>
 </section>
 
 <section id="home"><!-- ################################################# -->
 <h1>Live TV</h1>
 <table class="byrow">
-	<tr><th>Tablo Name:</th><td id="Tserver_name"><td></tr>
-	<tr><th>Tablo Model:</th><td id="Tserver_model"><td></tr>
-	<tr><th>Tablo Firmware:</th><td id="Tserver_version"><td></tr>
+	<tr><th>Tablo Name:</th><td id="Tserver_name"></td></tr>
+	<tr><th>Tablo Model:</th><td id="Tserver_model"></td></tr>
+	<tr><th>Tablo Firmware:</th><td id="Tserver_version"></td></tr>
 	<tr id="Thd_info"></tr>
-	<tr id="tuner_info"></tr>
+	<tr><th>Tuners:</th><td id="tuner_info"></td></tr>
 </table>
 
 <h2>Active Channels (<span id="tchannel_count"></span>)</h2>
@@ -139,6 +148,5 @@
 	<li><i>-bsf:a aac_adtstoasc</i>: makes a change to how aac is stored so that the video will play sooner when streamed. Remove this if you use ac3 audio encoding.</li>
 	<li><i>filename.mp4</i>: is the name of the file to save the video to. You can change the extention to change the container type. For example, use <i>.mkv</i> if you prefer.</li>
 </ul>
-
 </section>
 </body></html>
