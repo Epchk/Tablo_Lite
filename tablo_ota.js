@@ -24,7 +24,7 @@ async function tgetRESTData(url) {
 async function tpostRESTData(url, data) {
     console.log(data);
     try {
-        const response = await fetch(url, {method: "POST", body: data});
+        const response = await fetch(url, {method: "POST", cache: "no-cache", body: data});
         if (!response.ok) {
             const error_text = await response.json();
             alert(error_text.error.description);
