@@ -53,7 +53,7 @@ Tablo device information is displayed at the top with a list of the configured c
 
 ## Planned Functionality
 
-The following will probably not be included in the 1.0 release
+The following did not get included in the 1.0 release
 - Select recording and live tv quality
 - Select preferred audio track
 
