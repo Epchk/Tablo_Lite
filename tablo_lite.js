@@ -188,8 +188,10 @@ async function doRecordings(page = 1) {
 			for (path in list) {
 				const recording = list[path];
 				const local_datetime = new Date(`${recording.airing_details.datetime}`).toLocaleString('en-CA', {timeZone: "America/Toronto"}); //FIXME: use system timezone
+				const tablo_ip = document.getElementById("tablo_ip_entry").value;
+				const image_url = `http://${tablo_ip}:18080/pvr/${recording.object_id}/snap.jpg`;
 				document.getElementById('Trecordings').innerHTML += `<tr><td>${i} - ${recording.object_id}</td><td>` +
-					`<a href="#watch" onClick="doWatch('${recording.path}');">${recording.airing_details.show_title}</a></td><td>` + 
+					`<a href="#watch" onClick="doWatch('${recording.path}');">${recording.airing_details.show_title}</a><br><img src="${image_url}"></img></td><td>` + 
 					Math.round(recording.video_details.duration/60) + "m </td><td>" +
 					`${recording.video_details.clean}</td><td>` +
 					`${recording.video_details.height}</td><td>` +
