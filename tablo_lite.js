@@ -46,7 +46,7 @@ async function doHome(page = 1) {
 		for (drive of hd) {
 			//NOTE: this will MESS UP if there is more than one HDD (like on the newer models that have an internal HD)
 			drivewarn = drive.size_mib * 0.9;
-			document.getElementById("Thd_info").innerHTML += `<th>${drive.name}</th><td>${drive.usage_mib} MB available of ${drive.size_mib} MB<meter min=0 value=${drive.free_mib} high=${drivewarn} max=${drive.size_mib}></td>`;
+			document.getElementById("Thd_info").innerHTML += `<th>${drive.name}</th><td>${drive.usage_mib} MB available of ${drive.size_mib} MB <meter min=0 value=${drive.free_mib} high=${drivewarn} max=${drive.size_mib}></td>`;
 		}
 	});
 
