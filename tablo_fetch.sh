@@ -1,4 +1,4 @@
-#!/usr/local/bin/bash
+#!/usr/bin/env bash
 # SCript is written to run on FreeBSD. Path may need to be altered for Linux
 #
 #IP:8885/server/info			json server information
