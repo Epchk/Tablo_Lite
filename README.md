@@ -26,6 +26,14 @@ To run it, load the index.html in a web browser running on a computer that is on
 
 Some Tablo devices do not encode video in a format that is supported by the video player in most web browser. Older tablo devices encoded in h.264, which is supported.
 
+#### Saving Videos
+
+The Tablo_Lite tool does not directly support saving videos from the TabloTV device. The field in settings is a placeholder only. The URL presented at the top of the play screen can be used to save the video with tools that support saving media streams. The following is an example of how one could do this with the FFMpeg tool:
+
+```
+ffmpeg -i "URL" -c:v h264 -crf 23 -c:a aac "filename.mp4"
+```
+
 ### Channels
 - List basic device information.
 - List available channels, 50 at a time.
