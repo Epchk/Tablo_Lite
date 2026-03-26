@@ -5,7 +5,7 @@ If you are looking for the official web app for the Tablo, it's at ![http://my.t
 
 ## Installation
 
-Put the following files into a directory. It can be local to your PC or on a web server that serves static http (not https)<sup>(1)</sup> conent.
+Put the following files into a directory. It can be local to your PC or on a web server that serves static http (not https)<sup>(1)</sup> content.
 
 * index.html
 * tablo_lite.css
